@@ -1,0 +1,2 @@
+TODO: Implement deauth? Maybe just delete any local copies of the token if 401 Unauthorized is received
+TODO: Check and respect rate limits to avoid overuse
