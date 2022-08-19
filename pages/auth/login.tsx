@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 import AthleteSummary from '../../components/AthleteSummary'
 import StravaLogin from '../../components/StravaLogin'
 import useStrava from '../../hooks/useStrava'
@@ -31,6 +32,7 @@ export default function Login() {
               ? <div>
                 <p>Your account is connected</p>
                 <AthleteSummary athlete={strava?.getAthlete()} />
+                <h1><Link href="/swcp">Ready?</Link></h1>
               </div>
               : <StravaLogin />}
           </div>
