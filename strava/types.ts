@@ -65,3 +65,103 @@ export interface Activity {
   kilojoules?: number
   device_watts?: boolean
 }
+
+export const activityTypeToIcon = (type: string) => {
+  switch (type) {
+    case 'AlpineSki':
+      return '⛷️​'
+    case 'BackcountrySki':
+      return '⛷️​'
+    case 'Canoeing':
+      return '​🛶'
+    case 'Crossfit':
+      return '🏋️​'
+    case 'EBikeRide':
+      return '🚴​'
+    // case 'Elliptical':
+    // return ''
+    case 'Golf':
+      return '🏌️​'
+    // case 'Handcycle':
+    // return ''
+    case 'Hike':
+      return '🚶'
+    case 'IceSkate':
+      return '⛸️​'
+    case 'InlineSkate':
+      return '​🛼'
+    case 'Kayaking':
+      return '​🛶'
+    // case 'Kitesurf':
+    // return ''
+    case 'NordicSki':
+      return '⛷️​'
+    case 'Ride':
+      return '🚴'
+    case 'RockClimbing':
+      return '🧗​'
+    // case 'RollerSki':
+    // return ''
+    case 'Rowing':
+      return '🚣​'
+    case 'Run':
+      return '🏃'
+    case 'Sail':
+      return '⛵​'
+    case 'Skateboard':
+      return '🛹​'
+    case 'Snowboard':
+      return '🏂​'
+    // case 'Snowshoe':
+    // return ''
+    case 'Soccer':
+      return '⚽​'
+    // case 'StairStepper':
+    // return ''
+    // case 'StandUpPaddling':
+    // return ''
+    case 'Surfing':
+      return '🏄​'
+    case 'Swim':
+      return '🏊​'
+    // case 'Velomobile':
+    // return ''
+    case 'VirtualRide':
+      return '🚴​'
+    case 'VirtualRun':
+      return '​🏃'
+    case 'Walk':
+      return '🚶'
+    case 'WeightTraining':
+      return '🏋️'
+    case 'Wheelchair':
+      return '🦽​'
+    // case 'Windsurf':
+    // return ''
+    case 'Workout':
+      return '⚡​'
+    case 'Yoga':
+      return '🧘'
+    default:
+      return '⚡​'
+  }
+}
+
+export const metersReadable = (metres: number) => {
+  if (metres < 1000) {
+    return `${metres}m`
+  } else {
+    return `${(metres / 1000).toFixed(1)}km`
+  }
+}
+
+export const timeReadable = (seconds: number) => {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = Math.floor(seconds % 60)
+
+  if (h < 1) {
+    return m.toString() + 'm ' + s.toString().padStart(2, '0') + 's'
+  }
+  return h.toString() + 'h ' + m.toString().padStart(2, '0') + 'm '
+}

@@ -4,8 +4,7 @@ import Image from 'next/image'
 import Trail from '../components/Trail'
 import styles from '../styles/Home.module.css'
 
-// TODO: Is initialising these here going to cause a bug in next?
-const CLIENT_ID = process.env.STRAVA_CLIENT_ID
+const CLIENT_ID = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
 const CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET
 
 type TrailPageProps = {

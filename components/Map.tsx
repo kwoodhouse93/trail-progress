@@ -3,8 +3,9 @@ import 'leaflet/dist/leaflet.css'
 
 
 const Map = () => {
-  const positions = require('../hacking/swcp.json')
-  const activity = require('../hacking/sampletrack.json')
+  const positions = require('../hacking/data/swcp.json')
+  const activity = require('../hacking/data/lizard_hike.json')
+  const intersection = require('../hacking/data/intersection.json')
   return (
     <MapContainer center={[50.51, -4.06]} zoom={8} scrollWheelZoom={false} style={{ height: '80vh', width: "60%" }}>
       <TileLayer
@@ -13,6 +14,7 @@ const Map = () => {
       />
       <Polyline positions={positions} />
       <Polyline positions={activity} color='red' />
+      <Polyline positions={intersection} color='green' />
     </MapContainer>
   )
 }
