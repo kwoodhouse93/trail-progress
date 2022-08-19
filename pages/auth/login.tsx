@@ -1,9 +1,13 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import Link from 'next/link'
-import styles from '../styles/Home.module.css'
+import AthleteSummary from '../../components/AthleteSummary'
+import StravaLogin from '../../components/StravaLogin'
+import useStrava from '../../hooks/useStrava'
+import styles from '../../styles/Home.module.css'
 
 export default function Login() {
+  const { strava, authed } = useStrava()
+
   return (
     <div className={styles.container}>
       <Head>
@@ -18,16 +22,18 @@ export default function Login() {
         </h1>
 
         <p className={styles.description}>
-          Choose a trail, and connect your Strava account to see your progress!
+          Connect your Strava account to use TrailTracker.
         </p>
 
         <div className={styles.grid}>
-          <Link href="/swcp" passHref>
-            <a className={styles.card}>
-              <h2>South West Cost Path</h2>
-              <p>The UK’s longest and best-loved National Trail!</p>
-            </a>
-          </Link>
+          <div>
+            {authed
+              ? <div>
+                <p>Your account is connected</p>
+                <AthleteSummary athlete={strava?.getAthlete()} />
+              </div>
+              : <StravaLogin />}
+          </div>
         </div>
       </main>
 

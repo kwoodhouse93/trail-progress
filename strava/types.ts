@@ -1,6 +1,25 @@
 export interface Athlete {
   id: number
   resource_state: number
+  username?: any
+  firstname: string
+  lastname: string
+  bio: string
+  city: string
+  state: string
+  country: string
+  sex: 'M' | 'F'
+  premium: boolean // Deprecated
+  summit: boolean
+  created_at: Date
+  updated_at: Date
+  badge_type_id?: number
+  weight?: number
+  profile_medium: string
+  profile: string
+  friend?: any
+  follower?: any
+
 }
 
 export interface Map {

@@ -111,7 +111,7 @@ const inBufferedBounds = (point: Point, bounds: Bounds, bufferDistance: number) 
 }
 
 // Find the closest point to `point` on `route`
-// TODO: This is *very* slow - can we optimise?
+// This is *very* slow.
 const closestPoint = (route: Track, point: Point, routeBounds: Bounds) => {
   let closest: { distance: number, point?: Point } = {
     distance: Number.MAX_SAFE_INTEGER,
