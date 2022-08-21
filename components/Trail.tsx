@@ -68,7 +68,7 @@ const Trail = () => {
     </ul>
 
     <h1>Latest activity</h1>
-    <ActivitySummary activity={activities[1]} />
+    <ActivitySummary activity={activities[0]} />
 
     <h1>Your activities</h1>
     <ol>

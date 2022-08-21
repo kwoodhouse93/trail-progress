@@ -62,6 +62,31 @@ var parseArrays = function (a) {
         };
     });
 };
+var trackToVisitable = function (track) {
+    return track.map(function (p) {
+        return {
+            point: p,
+            visited: false
+        };
+    });
+};
+var visitableToTrack = function (visitable) {
+    return visitable.map(function (p) {
+        return p.point;
+    });
+};
+var coverage = function (track) {
+    return track.filter(function (p) { return p.visited; }).length / track.length;
+};
+var distanceCovered = function (track) {
+    var length = 0;
+    for (var i = 0; i < track.length - 1; i++) {
+        if (track[i].visited && track[i + 1].visited) {
+            length += distance(track[i].point, track[i + 1].point);
+        }
+    }
+    return length;
+};
 var trackCenter = function (track) {
     var sum = track.reduce(function (acc, cur) {
         acc.lat += cur.lat;
@@ -113,11 +138,12 @@ var inBufferedBounds = function (point, bounds, bufferDistance) {
         point.lon > bufferedBounds.max.lon);
 };
 // Find the closest point to `point` on `route`
-// TODO: This is *very* slow - can we optimise?
+// This is *very* slow.
 var closestPoint = function (route, point, routeBounds) {
     var closest = {
         distance: Number.MAX_SAFE_INTEGER,
-        point: undefined
+        point: undefined,
+        index: -1
     };
     // Discard points not within route bounds (plus a buffer)
     if (routeBounds !== undefined) {
@@ -125,11 +151,12 @@ var closestPoint = function (route, point, routeBounds) {
             return closest;
         }
     }
-    route.forEach(function (p) {
+    route.forEach(function (p, i) {
         var d = distance(p, point);
         if (d < closest.distance) {
             closest.distance = d;
             closest.point = p;
+            closest.index = i;
         }
     });
     return closest;
@@ -152,6 +179,11 @@ var isPointWithinBuffer = function (route, point, routeBounds, bufferDistance) {
 };
 var isOnRoute = function (route, point, routeBounds, bufferDistance) {
     return isPointWithinBuffer(route, point, routeBounds, bufferDistance);
+};
+var fullTrackRouteIntersection = function (route, track) {
+    var routeBounds = boundingBox(route);
+    var trackBounds = boundingBox(track);
+    return trackRouteIntersection(route, track, routeBounds, trackBounds);
 };
 var trackRouteIntersection = function (route, track, routeBounds, trackBounds) {
     if (!boundsOverlap(routeBounds, trackBounds)) {
@@ -226,6 +258,31 @@ var metersReadable = function (metres) {
         return "".concat((metres / 1000).toFixed(3), "km");
     }
 };
+var applyTrack = function (visitableRoute, track) {
+    var route = visitableToTrack(visitableRoute);
+    var routeBounds = boundingBox(route);
+    var trackBounds = boundingBox(track);
+    var pointsOnRoute = trackRouteIntersection(route, track, routeBounds, trackBounds);
+    var closestStart = closestPoint(route, pointsOnRoute[0], routeBounds);
+    var closestEnd = closestPoint(route, pointsOnRoute[pointsOnRoute.length - 1], routeBounds);
+    console.log('Closest point to start of intersection:', closestStart);
+    console.log('Closest point to end of intersection:', closestEnd);
+    var start = 0, end = 0;
+    if (closestStart.index > closestEnd.index) {
+        start = closestEnd.index;
+        end = closestStart.index;
+    }
+    else {
+        start = closestStart.index;
+        end = closestEnd.index;
+    }
+    visitableRoute.forEach(function (p, i) {
+        if (i >= start && i <= end) {
+            p.visited = true;
+        }
+    });
+    return visitableRoute;
+};
 var printTrackInfo = function (name, track) {
     console.log('Track');
     console.log('  name: ', name);
@@ -236,16 +293,22 @@ var printTrackInfo = function (name, track) {
     console.log();
 };
 var printTrackComparison = function (routeName, route, trackName, track) {
+    var visitableRoute = trackToVisitable(route);
+    var applied = applyTrack(visitableRoute, track);
     var routeBounds = boundingBox(route);
     var trackBounds = boundingBox(track);
+    // TODO: applyTrack and trackRouteIntersection both calculate an
+    // intersection that could be shared.
     var pointsOnRoute = trackRouteIntersection(route, track, routeBounds, trackBounds);
     console.log('Track comparison');
     console.log('  route: ', routeName);
     console.log('  track: ', trackName);
     console.log('  overlap: ', boundsOverlap(routeBounds, trackBounds) ? '✅' : '❌');
-    console.log('  pointsOnRoute: ', amountOfTrackPointsOnRoute(track, pointsOnRoute)); // Disable if not needed as it's a bit slow
+    console.log('  pointsOnRoute: ', amountOfTrackPointsOnRoute(track, pointsOnRoute) * 100, '%');
     console.log('  intersectionLength: ', metersReadable(trackLength(pointsOnRoute)));
     console.log('  trackRouteCoverage: ', trackLength(pointsOnRoute) / trackLength(route) * 100, '%');
+    console.log('  swcpDistance: ', metersReadable(distanceCovered(applied)));
+    console.log('  swcpDistancePercent: ', distanceCovered(applied) / trackLength(route) * 100, '%');
     console.log();
 };
 //--- Main ---

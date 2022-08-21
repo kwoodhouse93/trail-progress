@@ -17,6 +17,13 @@ type Point = {
 
 type Track = Point[]
 
+type VisitablePoint = {
+  point: Point
+  visited: boolean
+}
+
+type VisitableTrack = VisitablePoint[]
+
 type Bounds = {
   min: Point
   max: Point
@@ -50,6 +57,35 @@ const parseArrays = (a: number[][]) => {
       lon: lon,
     }
   })
+}
+
+const trackToVisitable = (track: Track) => {
+  return track.map(p => {
+    return {
+      point: p,
+      visited: false,
+    }
+  })
+}
+
+const visitableToTrack = (visitable: VisitableTrack) => {
+  return visitable.map(p => {
+    return p.point
+  })
+}
+
+const coverage = (track: VisitableTrack) => {
+  return track.filter(p => p.visited).length / track.length
+}
+
+const distanceCovered = (track: VisitableTrack) => {
+  let length = 0
+  for (let i = 0; i < track.length - 1; i++) {
+    if (track[i].visited && track[i + 1].visited) {
+      length += distance(track[i].point, track[i + 1].point)
+    }
+  }
+  return length
 }
 
 const trackCenter = (track: Track) => {
@@ -113,9 +149,10 @@ const inBufferedBounds = (point: Point, bounds: Bounds, bufferDistance: number) 
 // Find the closest point to `point` on `route`
 // This is *very* slow.
 const closestPoint = (route: Track, point: Point, routeBounds: Bounds) => {
-  let closest: { distance: number, point?: Point } = {
+  let closest: { distance: number, point?: Point, index: number } = {
     distance: Number.MAX_SAFE_INTEGER,
     point: undefined,
+    index: -1,
   }
 
   // Discard points not within route bounds (plus a buffer)
@@ -125,11 +162,12 @@ const closestPoint = (route: Track, point: Point, routeBounds: Bounds) => {
     }
   }
 
-  route.forEach(p => {
+  route.forEach((p, i) => {
     const d = distance(p, point)
     if (d < closest.distance) {
       closest.distance = d
       closest.point = p
+      closest.index = i
     }
   })
   return closest
@@ -244,6 +282,35 @@ const metersReadable = (metres: number) => {
   }
 }
 
+const applyTrack = (visitableRoute: VisitableTrack, track: Track) => {
+  const route = visitableToTrack(visitableRoute)
+
+  const routeBounds = boundingBox(route)
+  const trackBounds = boundingBox(track)
+  const pointsOnRoute = trackRouteIntersection(route, track, routeBounds, trackBounds)
+
+  const closestStart = closestPoint(route, pointsOnRoute[0], routeBounds)
+  const closestEnd = closestPoint(route, pointsOnRoute[pointsOnRoute.length - 1], routeBounds)
+  console.log('Closest point to start of intersection:', closestStart)
+  console.log('Closest point to end of intersection:', closestEnd)
+
+  let start = 0, end = 0
+  if (closestStart.index > closestEnd.index) {
+    start = closestEnd.index
+    end = closestStart.index
+  } else {
+    start = closestStart.index
+    end = closestEnd.index
+  }
+
+  visitableRoute.forEach((p, i) => {
+    if (i >= start && i <= end) {
+      p.visited = true
+    }
+  })
+  return visitableRoute
+}
+
 const printTrackInfo = (name: string, track: Track) => {
   console.log('Track')
   console.log('  name: ', name)
@@ -255,17 +322,25 @@ const printTrackInfo = (name: string, track: Track) => {
 }
 
 const printTrackComparison = (routeName: string, route: Track, trackName: string, track: Track) => {
+  const visitableRoute = trackToVisitable(route)
+  const applied = applyTrack(visitableRoute, track)
+
   const routeBounds = boundingBox(route)
   const trackBounds = boundingBox(track)
+
+  // TODO: applyTrack and trackRouteIntersection both calculate an
+  // intersection that could be shared.
   const pointsOnRoute = trackRouteIntersection(route, track, routeBounds, trackBounds)
 
   console.log('Track comparison')
   console.log('  route: ', routeName)
   console.log('  track: ', trackName)
   console.log('  overlap: ', boundsOverlap(routeBounds, trackBounds) ? '✅' : '❌')
-  console.log('  pointsOnRoute: ', amountOfTrackPointsOnRoute(track, pointsOnRoute)) // Disable if not needed as it's a bit slow
+  console.log('  pointsOnRoute: ', amountOfTrackPointsOnRoute(track, pointsOnRoute) * 100, '%')
   console.log('  intersectionLength: ', metersReadable(trackLength(pointsOnRoute)))
   console.log('  trackRouteCoverage: ', trackLength(pointsOnRoute) / trackLength(route) * 100, '%')
+  console.log('  swcpDistance: ', metersReadable(distanceCovered(applied)))
+  console.log('  swcpDistancePercent: ', distanceCovered(applied) / trackLength(route) * 100, '%')
   console.log()
 }
 

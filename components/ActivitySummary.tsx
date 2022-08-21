@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { fullTrackRouteIntersection, parseArrays, trackLength } from '../utils/gps'
 import { Activity, activityTypeToIcon, metersReadable, timeReadable } from '../strava/types'
 
@@ -7,6 +8,11 @@ type ActivitySummaryProps = {
 }
 
 const ActivitySummary = ({ activity }: ActivitySummaryProps) => {
+  const SummaryMap = useMemo(() => dynamic(
+    () => import('../components/SummaryMap'),
+    { loading: () => <p>Loading map...</p>, ssr: false, },
+  ), [])
+
   const [track, setTrack] = useState<number[][]>([])
   const [routePercentage, setRoutePercentage] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -46,6 +52,7 @@ const ActivitySummary = ({ activity }: ActivitySummaryProps) => {
     <p>{metersReadable(activity.distance)}, {timeReadable(activity.moving_time)}</p>
     {/* {loading && <p>Calculating route coverage...</p>} */}
     {/* {(track.length > 0) && <p>Covers <em>{routePercentage.toFixed(2)}%</em> of the SWCP</p>} */}
+    {activity.map.summary_polyline !== null && <SummaryMap polyline={activity.map.summary_polyline} />}
     <a href={`https://www.strava.com/activities/${activity.id}`}>View on Strava</a>
   </div>
 }
