@@ -1,13 +1,15 @@
 import * as fs from 'fs'
-import * as path from 'path'
+import simplifyjs from 'simplify-js'
 import * as xml2js from 'xml2js'
+import { performance } from 'perf_hooks'
 
 //--- Constants ---
-// const DEG_TO_MET = 111_139 // Very approximate but good enough for us for now
-// const MET_TO_DEG = 1 / DEG_TO_MET
+const DEG_TO_MET = 111_139 // Very approximate but good enough for us for now
+const MET_TO_DEG = 1 / DEG_TO_MET
 
 //--- Tuning params ---
 const BUFFER_DISTANCE = 150 /* meters */
+const SIMPLIFY_TOLERANCE = 5 * MET_TO_DEG
 
 //--- Types ---
 type Point = {
@@ -74,6 +76,11 @@ const visitableToTrack = (visitable: VisitableTrack) => {
   })
 }
 
+const simplify = (track: Track) => {
+  const out = simplifyjs(track.map(p => { return { x: p.lat, y: p.lon } }), SIMPLIFY_TOLERANCE)
+  return out.map(p => { return { lat: p.x, lon: p.y } })
+}
+
 const coverage = (track: VisitableTrack) => {
   return track.filter(p => p.visited).length / track.length
 }
@@ -88,6 +95,8 @@ const distanceCovered = (track: VisitableTrack) => {
   return length
 }
 
+// Not a true geometric center, but the average of all points.
+// Typically fine for a GPS track with a fairly even distance between samples.
 const trackCenter = (track: Track) => {
   const sum = track.reduce((acc, cur) => {
     acc.lat += cur.lat
@@ -191,6 +200,47 @@ const isPointWithinBuffer = (route: Track, point: Point, routeBounds: Bounds, bu
   })
 }
 
+// Does the same as isPointWithinBufferIndex, but returns the index of the point found
+// and uses it to find the next point to check.
+// This should be faster when checking track points in order, as the next point on our
+// track is likely to be at, or very near, the next point on the route.
+const isPointWithinBufferIndex
+  : (route: Track, point: Point, routeBounds: Bounds, bufferDistance: number, startIndex: number | undefined) => { ok: boolean, index: number }
+  = (route, point, routeBounds, bufferDistance, startIndex) => {
+    const maxSearchPoints = 100
+
+    // Discard points not within route bounds (plus a buffer)
+    if (routeBounds !== undefined) {
+      if (!inBufferedBounds(point, routeBounds, bufferDistance)) {
+        return { ok: false, index: -1 }
+      }
+    }
+
+    // If we don't know where to start looking, start from the beginning.
+    if (startIndex === undefined) {
+      for (let i = 0; i < route.length; i++) {
+        const d = distance(route[i], point)
+        if (d < bufferDistance) {
+          return { ok: true, index: i }
+        }
+      }
+      return { ok: false, index: -1 }
+    }
+
+    // If we do have a start index, expand our search in either direction from there.
+    for (let i = 0; i < maxSearchPoints; i++) {
+      const mod = i % 2 === 1 ? Math.round(i / 2) : Math.round(-i / 2)
+      if (startIndex + mod < 0 || startIndex + mod >= route.length) {
+        continue
+      }
+      const d = distance(route[startIndex + mod], point)
+      if (d < bufferDistance) {
+        return { ok: true, index: startIndex + mod }
+      }
+    }
+    return { ok: false, index: -1 }
+  }
+
 const isOnRoute = (route: Track, point: Point, routeBounds: Bounds, bufferDistance: number) => {
   return isPointWithinBuffer(route, point, routeBounds, bufferDistance)
 }
@@ -206,6 +256,21 @@ const trackRouteIntersection = (route: Track, track: Track, routeBounds: Bounds,
     return []
   }
   return track.filter(p => isOnRoute(route, p, routeBounds, BUFFER_DISTANCE))
+}
+
+const trackRouteIntersectionWithIndexOptimisation = (route: Track, track: Track, routeBounds: Bounds, trackBounds: Bounds) => {
+  if (!boundsOverlap(routeBounds, trackBounds)) {
+    return []
+  }
+
+  let swcpIndex: number | undefined = undefined
+  return track.filter(p => {
+    const { ok, index } = isPointWithinBufferIndex(route, p, routeBounds, BUFFER_DISTANCE, swcpIndex)
+    if (ok) {
+      swcpIndex = index
+    }
+    return ok
+  })
 }
 
 const amountOfTrackPointsOnRoute: (track: Track, intersection: Track) => number = (track, intersection) => {
@@ -287,12 +352,10 @@ const applyTrack = (visitableRoute: VisitableTrack, track: Track) => {
 
   const routeBounds = boundingBox(route)
   const trackBounds = boundingBox(track)
-  const pointsOnRoute = trackRouteIntersection(route, track, routeBounds, trackBounds)
+  const pointsOnRoute = trackRouteIntersectionWithIndexOptimisation(route, track, routeBounds, trackBounds)
 
   const closestStart = closestPoint(route, pointsOnRoute[0], routeBounds)
   const closestEnd = closestPoint(route, pointsOnRoute[pointsOnRoute.length - 1], routeBounds)
-  console.log('Closest point to start of intersection:', closestStart)
-  console.log('Closest point to end of intersection:', closestEnd)
 
   let start = 0, end = 0
   if (closestStart.index > closestEnd.index) {
@@ -322,6 +385,8 @@ const printTrackInfo = (name: string, track: Track) => {
 }
 
 const printTrackComparison = (routeName: string, route: Track, trackName: string, track: Track) => {
+  const s = performance.now()
+
   const visitableRoute = trackToVisitable(route)
   const applied = applyTrack(visitableRoute, track)
 
@@ -341,6 +406,10 @@ const printTrackComparison = (routeName: string, route: Track, trackName: string
   console.log('  trackRouteCoverage: ', trackLength(pointsOnRoute) / trackLength(route) * 100, '%')
   console.log('  swcpDistance: ', metersReadable(distanceCovered(applied)))
   console.log('  swcpDistancePercent: ', distanceCovered(applied) / trackLength(route) * 100, '%')
+
+  const e = performance.now()
+  console.log('  execution time: ', (e - s).toFixed(3), 'ms')
+
   console.log()
 }
 
@@ -354,10 +423,12 @@ const swcpGPX = fs.readFileSync('hacking/data/SWCP-elev.gpx')
 const swcpRoute = parseGPX(swcpGPX)
 
 printTrackInfo('SWCP Route', swcpRoute)
+printTrackInfo('SWCP Route (Simplified)', simplify(swcpRoute))
 printTrackInfo('Lizard Activity', lizardRoute)
+printTrackInfo('Lizard Activity (Simplified)', simplify(lizardRoute))
 
-printTrackComparison('SWCP Route', swcpRoute, 'Lizard Activity', lizardRoute)
-
+// printTrackComparison('SWCP Route', swcpRoute, 'Lizard Activity', lizardRoute)
+printTrackComparison('SWCP Route (Simplified)', simplify(swcpRoute), 'Lizard Activity (Simplified)', simplify(lizardRoute))
 
 
 // outputTrack(trackRouteIntersection(swcpRoute, lizardRoute), 'hacking/data/intersection.json')

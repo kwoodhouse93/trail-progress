@@ -5,3 +5,4 @@ TODO: Implement Strava brand guidelines
 TODO: Set up OAuth in deployment (including redirects not just to localhost)
 TODO: Allow user to log out or change accounts
 TODO: Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
+TODO: Look into simplifying tracks, e.g. Ramer-Douglas-Peucker algorithm, implemented in Simplify.js

@@ -27,12 +27,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var fs = __importStar(require("fs"));
+var simplify_js_1 = __importDefault(require("simplify-js"));
 var xml2js = __importStar(require("xml2js"));
+var perf_hooks_1 = require("perf_hooks");
 //--- Constants ---
-// const DEG_TO_MET = 111_139 // Very approximate but good enough for us for now
-// const MET_TO_DEG = 1 / DEG_TO_MET
+var DEG_TO_MET = 111139; // Very approximate but good enough for us for now
+var MET_TO_DEG = 1 / DEG_TO_MET;
 //--- Tuning params ---
 var BUFFER_DISTANCE = 150; /* meters */
+var SIMPLIFY_TOLERANCE = 5 * MET_TO_DEG;
 //--- Helper functions ---
 var parseGPX = function (gpx) {
     var outputTrack = [];
@@ -75,6 +78,10 @@ var visitableToTrack = function (visitable) {
         return p.point;
     });
 };
+var simplify = function (track) {
+    var out = (0, simplify_js_1["default"])(track.map(function (p) { return { x: p.lat, y: p.lon }; }), SIMPLIFY_TOLERANCE);
+    return out.map(function (p) { return { lat: p.x, lon: p.y }; });
+};
 var coverage = function (track) {
     return track.filter(function (p) { return p.visited; }).length / track.length;
 };
@@ -87,6 +94,8 @@ var distanceCovered = function (track) {
     }
     return length;
 };
+// Not a true geometric center, but the average of all points.
+// Typically fine for a GPS track with a fairly even distance between samples.
 var trackCenter = function (track) {
     var sum = track.reduce(function (acc, cur) {
         acc.lat += cur.lat;
@@ -177,6 +186,41 @@ var isPointWithinBuffer = function (route, point, routeBounds, bufferDistance) {
         }
     });
 };
+// Does the same as isPointWithinBufferIndex, but returns the index of the point found
+// and uses it to find the next point to check.
+// This should be faster when checking track points in order, as the next point on our
+// track is likely to be at, or very near, the next point on the route.
+var isPointWithinBufferIndex = function (route, point, routeBounds, bufferDistance, startIndex) {
+    var maxSearchPoints = 100;
+    // Discard points not within route bounds (plus a buffer)
+    if (routeBounds !== undefined) {
+        if (!inBufferedBounds(point, routeBounds, bufferDistance)) {
+            return { ok: false, index: -1 };
+        }
+    }
+    // If we don't know where to start looking, start from the beginning.
+    if (startIndex === undefined) {
+        for (var i = 0; i < route.length; i++) {
+            var d = distance(route[i], point);
+            if (d < bufferDistance) {
+                return { ok: true, index: i };
+            }
+        }
+        return { ok: false, index: -1 };
+    }
+    // If we do have a start index, expand our search in either direction from there.
+    for (var i = 0; i < maxSearchPoints; i++) {
+        var mod = i % 2 === 1 ? Math.round(i / 2) : Math.round(-i / 2);
+        if (startIndex + mod < 0 || startIndex + mod >= route.length) {
+            continue;
+        }
+        var d = distance(route[startIndex + mod], point);
+        if (d < bufferDistance) {
+            return { ok: true, index: startIndex + mod };
+        }
+    }
+    return { ok: false, index: -1 };
+};
 var isOnRoute = function (route, point, routeBounds, bufferDistance) {
     return isPointWithinBuffer(route, point, routeBounds, bufferDistance);
 };
@@ -191,6 +235,21 @@ var trackRouteIntersection = function (route, track, routeBounds, trackBounds) {
     }
     return track.filter(function (p) { return isOnRoute(route, p, routeBounds, BUFFER_DISTANCE); });
 };
+var trackRouteIntersectionWithIndexOptimisation = function (route, track, routeBounds, trackBounds) {
+    if (!boundsOverlap(routeBounds, trackBounds)) {
+        return [];
+    }
+    var swcpIndex = undefined;
+    return track.filter(function (p) {
+        var _a = isPointWithinBufferIndex(route, p, routeBounds, BUFFER_DISTANCE, swcpIndex), ok = _a.ok, index = _a.index;
+        if (ok) {
+            swcpIndex = index;
+        }
+        return ok;
+    });
+};
+// return track.filter(p => isOnRoute(route, p, routeBounds, BUFFER_DISTANCE))
+// }
 var amountOfTrackPointsOnRoute = function (track, intersection) {
     return intersection.length / track.length;
 };
@@ -262,11 +321,9 @@ var applyTrack = function (visitableRoute, track) {
     var route = visitableToTrack(visitableRoute);
     var routeBounds = boundingBox(route);
     var trackBounds = boundingBox(track);
-    var pointsOnRoute = trackRouteIntersection(route, track, routeBounds, trackBounds);
+    var pointsOnRoute = trackRouteIntersectionWithIndexOptimisation(route, track, routeBounds, trackBounds);
     var closestStart = closestPoint(route, pointsOnRoute[0], routeBounds);
     var closestEnd = closestPoint(route, pointsOnRoute[pointsOnRoute.length - 1], routeBounds);
-    console.log('Closest point to start of intersection:', closestStart);
-    console.log('Closest point to end of intersection:', closestEnd);
     var start = 0, end = 0;
     if (closestStart.index > closestEnd.index) {
         start = closestEnd.index;
@@ -293,6 +350,7 @@ var printTrackInfo = function (name, track) {
     console.log();
 };
 var printTrackComparison = function (routeName, route, trackName, track) {
+    var s = perf_hooks_1.performance.now();
     var visitableRoute = trackToVisitable(route);
     var applied = applyTrack(visitableRoute, track);
     var routeBounds = boundingBox(route);
@@ -309,6 +367,8 @@ var printTrackComparison = function (routeName, route, trackName, track) {
     console.log('  trackRouteCoverage: ', trackLength(pointsOnRoute) / trackLength(route) * 100, '%');
     console.log('  swcpDistance: ', metersReadable(distanceCovered(applied)));
     console.log('  swcpDistancePercent: ', distanceCovered(applied) / trackLength(route) * 100, '%');
+    var e = perf_hooks_1.performance.now();
+    console.log('  execution time: ', (e - s).toFixed(3), 'ms');
     console.log();
 };
 //--- Main ---
@@ -317,8 +377,11 @@ var lizardRoute = parseArrays(lizard_hike_json_1["default"]);
 var swcpGPX = fs.readFileSync('hacking/data/SWCP-elev.gpx');
 var swcpRoute = parseGPX(swcpGPX);
 printTrackInfo('SWCP Route', swcpRoute);
+printTrackInfo('SWCP Route (Simplified)', simplify(swcpRoute));
 printTrackInfo('Lizard Activity', lizardRoute);
-printTrackComparison('SWCP Route', swcpRoute, 'Lizard Activity', lizardRoute);
+printTrackInfo('Lizard Activity (Simplified)', simplify(lizardRoute));
+// printTrackComparison('SWCP Route', swcpRoute, 'Lizard Activity', lizardRoute)
+printTrackComparison('SWCP Route (Simplified)', simplify(swcpRoute), 'Lizard Activity (Simplified)', simplify(lizardRoute));
 // outputTrack(trackRouteIntersection(swcpRoute, lizardRoute), 'hacking/data/intersection.json')
 // // Should not overlap
 // const peaksGPX = fs.readFileSync('hacking/data/peaks_hike.gpx')
