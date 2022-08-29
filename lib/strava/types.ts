@@ -38,13 +38,13 @@ export interface Activity {
   total_elevation_gain: number
   type: string
   sport_type: string
-  id: any
+  id: number
   start_date: Date
   start_date_local: Date
   timezone: string
   utc_offset: number
-  location_city?: any
-  location_state?: any
+  location_city?: string
+  location_state?: string
   location_country: string
   achievement_count: number
   kudos_count: number
@@ -72,7 +72,7 @@ export interface Activity {
   display_hide_heartrate_option: boolean
   elev_high: number
   elev_low: number
-  upload_id: any
+  upload_id?: string
   upload_id_str: string
   external_id: string
   from_accepted_tag: boolean

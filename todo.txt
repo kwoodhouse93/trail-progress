@@ -1,8 +1,51 @@
+Main tasks:
+1. Create client-side backfill method
+2. Load activities and polylines into the database
+3. Create query for getting SWCP completion based on the user's activity polylines, without caching or background processing
+4. Build the stats UI based on polylines query
+5. Look into pulling streams and processing these in addition to polylines
+6. Optimise (e.g. using materialised views or triggers).
+
+Q: When should a user's activities get loaded into the DB?
+A: Starting from when they first log in with Strava.
+
+Q: How do we start the process of fetching the users activities when they log in?
+A: We need their access token, and then we can fetch the list of all their activities.
+We can store this list in the DB.
+From there, we can trigger a function (in the DB? on the server? clientside?) to loop over each and
+get the stream data, storing that in the DB too. Once all activities (from the list) have had a track
+fetched, we can stop. We could query to see how many activities have been downloaded so far and resume
+the process if necessary. Essentially, we want to backfill stream data after already fetching all the
+activities. Also want to respect rate limits, etc
+
+Possible architectures:
+- Single background processor
+    Manage overall rate limits and ensure users each get a turn at downloading data.
+
+- Serverless process per user
+    A function/process per user, kicked off when user logs in.
+    + Simpler to track progress per user
+    - Trickier to manage rate limits across many users
+
+Got an architecture choice at this point...
+
+For each user, when they log in, we can use their access_token to get their activity data from Strava.
+
+So we want to make 1 or more requests to Strava to get their list of activities. Then based off that list,
+for each activity, we want to check if it's relevant to any of the long distance trails we care about, and
+if it is, get the position stream (latlong) and start computing overlap with the relevant trail.
+
+[strava login]--> access_token
+[access_token]--> activities
+[activities -> activity]-map->routes-[route/activity match]
+[route/activity match]--> route overlap
+(activities --> route overlap)->[route overlaps]--> summary stats
+
+TODO: Set up OAuth in deployment (including redirects not just to localhost)
+TODO: Look into Prisma?
 TODO: Implement deauth? Not sure it makes sense, but maybe just delete any local copies of the token if 401 Unauthorized is received?
 TODO: Check and respect rate limits to avoid overuse
 TODO: STYLING ✨
 TODO: Implement Strava brand guidelines
-TODO: Set up OAuth in deployment (including redirects not just to localhost)
 TODO: Allow user to log out or change accounts
 TODO: Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
-TODO: Look into simplifying tracks, e.g. Ramer-Douglas-Peucker algorithm, implemented in Simplify.js

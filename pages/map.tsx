@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import styles from 'styles/Home.module.css'
 import { useMemo } from 'react'
 
 export default function MapPage() {

@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
-import Trail from '../components/Trail'
-import useStrava from '../hooks/useStrava'
-import styles from '../styles/Home.module.css'
+import Trail from 'components/Trail'
+import useStrava from 'hooks/useStrava'
+import styles from 'styles/Home.module.css'
 
 export default function TrailPage() {
   const { authed } = useStrava()

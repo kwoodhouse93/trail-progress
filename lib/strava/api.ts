@@ -1,5 +1,3 @@
-import type { NextApiResponse } from 'next'
-
 export class StravaError extends Error {
   code: number
   detail: any

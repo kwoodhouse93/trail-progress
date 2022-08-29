@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { logRateLimits } from '../../utils/api'
+import { logRateLimits } from 'lib/strava/api'
 
 const positions = async (req: NextApiRequest, res: NextApiResponse) => {
   const { token, id } = req.query

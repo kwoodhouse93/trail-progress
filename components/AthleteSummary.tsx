@@ -1,4 +1,4 @@
-import { Athlete } from '../strava/types'
+import { Athlete } from 'lib/strava/types'
 
 type AthleteSummaryProps = {
   athlete?: Athlete

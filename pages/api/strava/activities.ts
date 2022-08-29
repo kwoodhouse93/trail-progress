@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { checkErrors, logRateLimits, StravaError } from '../../../utils/api'
+import { checkErrors, logRateLimits, StravaError } from 'lib/strava/api'
 
 const activities = async (req: NextApiRequest, res: NextApiResponse) => {
   const auth = req.headers.authorization
@@ -10,6 +10,7 @@ const activities = async (req: NextApiRequest, res: NextApiResponse) => {
   // Take token after Bearer part
   const access_token = auth.split(' ')[1]
 
+  // TODO: Implement pagination
   return fetch(`https://www.strava.com/api/v3/athlete/activities?per_page=200&access_token=${access_token}`)
     .then(logRateLimits)
     .then(checkErrors)

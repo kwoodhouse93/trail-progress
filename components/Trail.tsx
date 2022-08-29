@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Activity } from '../strava/types'
-import ActivitySummary from './ActivitySummary'
+import { Activity } from 'lib/strava/types'
+import ActivitySummary from 'components/ActivitySummary'
 
 import Toggle from 'react-toggle'
 import 'react-toggle/style.css'
-import useStrava from '../hooks/useStrava'
+import useStrava from 'hooks/useStrava'
+import useSupabase from 'hooks/useSupabase'
 
 const Trail = () => {
   const { strava, authed } = useStrava()
+  const supabase = useSupabase()
 
   const [includeHikes, setIncludeHikes] = useState(true)
   const [includeRuns, setIncludeRuns] = useState(true)
@@ -17,11 +19,24 @@ const Trail = () => {
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([])
 
   // Get the user's activities
-  useEffect(() => {
+  // useEffect(() => {
+  //   strava?.activities()
+  //     .then(activities => setActivities(activities))
+  //     .catch(e => console.error(e))
+  // }, [strava])
+
+  const backfill = () => {
+    console.log('Starting backfill')
     strava?.activities()
-      .then(activities => setActivities(activities))
+      .then(activities => {
+        setActivities(activities)
+        fetch('/api/user/activities', {
+          method: 'POST',
+          body: JSON.stringify(activities),
+        })
+      })
       .catch(e => console.error(e))
-  }, [strava])
+  }
 
   useEffect(() => {
     if (activities === undefined) return
@@ -33,11 +48,10 @@ const Trail = () => {
     ))
   }, [activities, includeHikes, includeRuns, includeRides])
 
-  if (activities === undefined || activities.length < 2) {
-    return <p>Loading...</p>
-  }
 
   return <>
+    <button onClick={backfill}>Backfill</button>
+    <br /><br />
     <div>
       <Toggle
         id='include-hikes'
@@ -60,22 +74,26 @@ const Trail = () => {
       <label htmlFor='include-rides'>Include rides 🚴</label>
     </div>
 
-    <h1>Your chosen activities</h1>
-    <ul>
-      {filteredActivities.map(a => <li key={a.id}>
-        <ActivitySummary activity={a} />
-      </li>)}
-    </ul>
+    <br /><br />
 
-    <h1>Latest activity</h1>
-    <ActivitySummary activity={activities[0]} />
+    {(activities === undefined || activities.length < 1) ? <div>No activities fetched</div> : <>
+      <h1>Your chosen activities</h1>
+      <ul>
+        {filteredActivities.map(a => <li key={a.id}>
+          <ActivitySummary activity={a} />
+        </li>)}
+      </ul>
 
-    <h1>Your activities</h1>
+      <h1>Latest activity</h1>
+      <ActivitySummary activity={activities[0]} />
+
+      {/* <h1>Your activities</h1>
     <ol>
       {activities.map(a => <li key={a.id}>
         <ActivitySummary activity={a} />
       </li>)}
-    </ol>
+    </ol> */}
+    </>}
   </>
 }
 

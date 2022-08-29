@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import AthleteSummary from '../../components/AthleteSummary'
-import StravaLogin from '../../components/StravaLogin'
-import useStrava from '../../hooks/useStrava'
-import styles from '../../styles/Home.module.css'
+import AthleteSummary from 'components/AthleteSummary'
+import StravaLogin from 'components/StravaLogin'
+import useStrava from 'hooks/useStrava'
+import styles from 'styles/Home.module.css'
 
 export default function Login() {
   const { strava, authed } = useStrava()

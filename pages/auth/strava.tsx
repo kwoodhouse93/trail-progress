@@ -2,9 +2,9 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import StravaLogin from '../../components/StravaLogin'
-import { exchangeCode } from '../../hooks/useStrava'
-import styles from '../../styles/Home.module.css'
+import StravaLogin from 'components/StravaLogin'
+import { exchangeCode } from 'hooks/useStrava'
+import styles from 'styles/Home.module.css'
 
 
 const AuthStrava = () => {

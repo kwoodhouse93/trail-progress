@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { checkErrors, StravaError } from '../../../../utils/api'
+import { checkErrors, StravaError } from 'lib/strava/api'
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
 const CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET

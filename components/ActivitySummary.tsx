@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { fullTrackRouteIntersection, parseArrays, trackLength } from '../utils/gps'
-import { Activity, activityTypeToIcon, metersReadable, timeReadable } from '../strava/types'
+import { fullTrackRouteIntersection, parseArrays, trackLength } from 'lib/gps'
+import { Activity, activityTypeToIcon, metersReadable, timeReadable } from 'lib/strava/types'
 
 type ActivitySummaryProps = {
   activity: Activity
