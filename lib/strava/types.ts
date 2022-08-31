@@ -1,35 +1,35 @@
 export interface Athlete {
   id: number
-  resource_state: number
+  resource_state?: number
   username?: any
-  firstname: string
-  lastname: string
-  bio: string
-  city: string
-  state: string
-  country: string
-  sex: 'M' | 'F'
-  premium: boolean // Deprecated
-  summit: boolean
-  created_at: Date
-  updated_at: Date
+  firstname?: string
+  lastname?: string
+  bio?: string
+  city?: string
+  state?: string
+  country?: string
+  sex?: 'M' | 'F'
+  premium?: boolean // Deprecated
+  summit?: boolean
+  created_at?: Date
+  updated_at?: Date
   badge_type_id?: number
   weight?: number
-  profile_medium: string
-  profile: string
+  profile_medium?: string
+  profile?: string
   friend?: any
   follower?: any
 
 }
 
 export interface Map {
-  id: string
+  id?: string
   summary_polyline: string
-  resource_state: number
+  resource_state?: number
 }
 
 export interface Activity {
-  resource_state: number
+  resource_state?: number
   athlete: Athlete
   name: string
   distance: number
@@ -37,48 +37,48 @@ export interface Activity {
   elapsed_time: number
   total_elevation_gain: number
   type: string
-  sport_type: string
+  sport_type?: string
   id: number
-  start_date: Date
-  start_date_local: Date
+  start_date: Date | string
+  start_date_local?: Date | string
   timezone: string
-  utc_offset: number
+  utc_offset?: number
   location_city?: string
   location_state?: string
-  location_country: string
-  achievement_count: number
-  kudos_count: number
-  comment_count: number
-  athlete_count: number
-  photo_count: number
+  location_country?: string
+  achievement_count?: number
+  kudos_count?: number
+  comment_count?: number
+  athlete_count?: number
+  photo_count?: number
   map: Map
-  trainer: boolean
-  commute: boolean
-  manual: boolean
-  private: boolean
+  trainer?: boolean
+  commute?: boolean
+  manual?: boolean
+  private?: boolean
   visibility: string
-  flagged: boolean
-  gear_id: string
-  start_latlng: number[]
-  end_latlng: number[]
+  flagged?: boolean
+  gear_id?: string
+  start_latlng?: number[]
+  end_latlng?: number[]
   average_speed: number
   max_speed: number
-  average_cadence: number
-  average_temp: number
-  has_heartrate: boolean
-  average_heartrate: number
-  max_heartrate: number
-  heartrate_opt_out: boolean
-  display_hide_heartrate_option: boolean
-  elev_high: number
-  elev_low: number
+  average_cadence?: number
+  average_temp?: number
+  has_heartrate?: boolean
+  average_heartrate?: number
+  max_heartrate?: number
+  heartrate_opt_out?: boolean
+  display_hide_heartrate_option?: boolean
+  elev_high?: number
+  elev_low?: number
   upload_id?: string
-  upload_id_str: string
-  external_id: string
-  from_accepted_tag: boolean
-  pr_count: number
-  total_photo_count: number
-  has_kudoed: boolean
+  upload_id_str?: string
+  external_id?: string
+  from_accepted_tag?: boolean
+  pr_count?: number
+  total_photo_count?: number
+  has_kudoed?: boolean
   workout_type?: number
   average_watts?: number
   kilojoules?: number

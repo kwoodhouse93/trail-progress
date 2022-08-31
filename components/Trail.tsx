@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Activity } from 'lib/strava/types'
-import ActivitySummary from 'components/ActivitySummary'
-
 import Toggle from 'react-toggle'
 import 'react-toggle/style.css'
 import useStrava from 'hooks/useStrava'
-import useSupabase from 'hooks/useSupabase'
+import { Activity } from 'lib/strava/types'
+import ActivitySummary from 'components/ActivitySummary'
+import TrailSummary from 'components/TrailSummary'
+import PagedActivitySummaries from 'components/PagedActivitySummaries'
 
 const Trail = () => {
-  const { strava, authed } = useStrava()
-  const supabase = useSupabase()
+  const { strava } = useStrava()
 
   const [includeHikes, setIncludeHikes] = useState(true)
   const [includeRuns, setIncludeRuns] = useState(true)
@@ -19,11 +18,19 @@ const Trail = () => {
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([])
 
   // Get the user's activities
-  // useEffect(() => {
-  //   strava?.activities()
-  //     .then(activities => setActivities(activities))
-  //     .catch(e => console.error(e))
-  // }, [strava])
+  useEffect(() => {
+    const athleteId = strava?.getAthlete()?.id
+    if (athleteId === undefined) {
+      return
+    }
+    getActivities(athleteId)
+  }, [strava])
+
+  const getActivities = (athleteId: number) => {
+    fetch(`/api/user/activities?id=${athleteId}`)
+      .then(res => res.json())
+      .then(data => setActivities(data))
+  }
 
   const backfill = () => {
     console.log('Starting backfill')
@@ -38,6 +45,10 @@ const Trail = () => {
       .catch(e => console.error(e))
   }
 
+  const callStrava = () => {
+    strava?.activities().then(d => console.log(d)).catch(e => console.error(e))
+  }
+
   useEffect(() => {
     if (activities === undefined) return
 
@@ -49,8 +60,10 @@ const Trail = () => {
   }, [activities, includeHikes, includeRuns, includeRides])
 
 
+
   return <>
-    <button onClick={backfill}>Backfill</button>
+    <button onClick={backfill}>Backfill</button><br />
+    <button onClick={callStrava}>Call Strava API</button>
     <br /><br />
     <div>
       <Toggle
@@ -77,22 +90,16 @@ const Trail = () => {
     <br /><br />
 
     {(activities === undefined || activities.length < 1) ? <div>No activities fetched</div> : <>
-      <h1>Your chosen activities</h1>
-      <ul>
-        {filteredActivities.map(a => <li key={a.id}>
-          <ActivitySummary activity={a} />
-        </li>)}
-      </ul>
+      <TrailSummary routeName='swcp' />
 
       <h1>Latest activity</h1>
       <ActivitySummary activity={activities[0]} />
 
-      {/* <h1>Your activities</h1>
-    <ol>
-      {activities.map(a => <li key={a.id}>
-        <ActivitySummary activity={a} />
-      </li>)}
-    </ol> */}
+      <h1>Your chosen activities</h1>
+      <PagedActivitySummaries activities={filteredActivities} />
+
+      <h1>Your activities</h1>
+      <PagedActivitySummaries activities={activities} />
     </>}
   </>
 }

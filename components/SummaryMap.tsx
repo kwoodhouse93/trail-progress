@@ -6,9 +6,10 @@ import { Map, Polyline as PolylineType } from 'leaflet'
 
 type SummaryMapProps = {
   polyline: string
+  overlayPolylines?: string[]
 }
 
-const SummaryMap = ({ polyline }: SummaryMapProps) => {
+const SummaryMap = ({ polyline, overlayPolylines }: SummaryMapProps) => {
   const mapRef = useRef<Map>(null)
 
   // Auto-set zoom based on polyline
@@ -47,10 +48,11 @@ const SummaryMap = ({ polyline }: SummaryMapProps) => {
       dragging={false}
     >
       <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        // attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <Polyline ref={fitRef} positions={points} />
+      {overlayPolylines?.map((p, i) => <Polyline key={i} positions={gPolyline.decode(p)} color='red' />)}
     </MapContainer>
   )
 }

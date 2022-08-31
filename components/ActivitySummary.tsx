@@ -52,7 +52,7 @@ const ActivitySummary = ({ activity }: ActivitySummaryProps) => {
     <p>{metersReadable(activity.distance)}, {timeReadable(activity.moving_time)}</p>
     {/* {loading && <p>Calculating route coverage...</p>} */}
     {/* {(track.length > 0) && <p>Covers <em>{routePercentage.toFixed(2)}%</em> of the SWCP</p>} */}
-    {activity.map.summary_polyline !== null && <SummaryMap polyline={activity.map.summary_polyline} />}
+    {/* {activity.map.summary_polyline !== null && <SummaryMap polyline={activity.map.summary_polyline} />} */}
     <a href={`https://www.strava.com/activities/${activity.id}`}>View on Strava</a>
   </div>
 }
