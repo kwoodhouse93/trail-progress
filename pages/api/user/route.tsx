@@ -7,6 +7,7 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
+  // TODO: Consolidate route name and route ID
   const rows = await pool.query(relevantActivitiesQuery, [req.query.name, req.query.id])
   // const rowDict = rows.rows.reduce((acc, row) => {
   //   if (acc[row.id] === undefined) {
@@ -31,61 +32,79 @@ const simplifyRange = 0.000045
 const relevantActivitiesQuery = `
 with
   route as (
-    select name, st_simplify(track::geometry, ${simplifyRange})::geography as track
+    select
+      id,
+      name,
+      track
     from routes
     where name = $1
   ),
   relevants as (
     select
-      id,
+      activities.id,
       activities.name,
-      activities.summary_track as activity_track,
       ST_AsEncodedPolyline(activities.summary_track::geometry) as polyline,
-      st_dwithin(
-        st_simplify(
-          summary_track::geometry,
-          ${simplifyRange}
-        )::geography,
-        route.track,
-        ${bufferDistanceMeters},
-        false   -- Use sphere for speed
-      ) as relevant
-    from
-      route,
-      activities
-    where
-      activities.athlete_id = $2
+      activities.summary_track as activity_track,
+      intersections.intersection_track,
+      intersections.id as intersection_id,
+      route.track as route_track
+    from intersections
+    join activities on activities.id = intersections.activity_id
+    join route on route.id = intersections.route_id
+    where intersections.route_id = route.id and activities.athlete_id = $2
   ),
-  intersections as (
+  start_ends as (
     select
-      relevants.id,
-      relevants.name,
-      relevants.polyline,
-      relevants.activity_track,
-      (st_dump(
-        st_intersection(
-          relevants.activity_track,
-          st_buffer(
-            route.track,
-            ${bufferDistanceMeters}
+      id,
+      name,
+      polyline,
+      intersection_track,
+      route_track,
+      intersection_id,
+      ST_LineLocatePoint(
+        route_track::geometry,
+        (ST_Dump(
+          ST_Boundary(
+            intersection_track::geometry
           )
-        )::geometry
-      )).geom as intersection_track
-    from relevants, route
-    where relevant = true
+        )).geom
+      ) as start_end_points
+    from relevants
+  ),
+  substrings as (
+    select
+      id,
+      name,
+      polyline,
+      intersection_track,
+      ST_LineSubstring(
+        route_track::geometry,
+        MIN(start_end_points),
+        MAX(start_end_points)
+      ) as substring
+    from start_ends
+    group by id, name, polyline, intersection_track, intersection_id, route_track
   ),
   aggregated as (
     select
-      intersections.id,
-      intersections.name,
-      intersections.polyline,
+      id,
+      name,
+      polyline,
       array_agg(
         ST_AsEncodedPolyline(
-          intersection_track
+          intersection_track::geometry
         )
-      ) as intersection_polylines
-    from intersections
-    group by intersections.id, intersections.name, intersections.polyline
+      ) as intersection_polylines,
+      array_agg(
+        ST_AsEncodedPolyline(
+          ST_CollectionExtract(
+            substring,
+            2
+          )
+        )
+      ) as substrings
+    from substrings
+    group by substrings.id, substrings.name, substrings.polyline
   )
 select * from aggregated;`
 

@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useState } from 'react'
 import { Route } from 'lib/types'
 import useStrava from 'hooks/useStrava'
+import activities from 'pages/api/strava/activities'
 
 type TrailSummaryProps = {
   routeName: 'swcp'
@@ -13,7 +14,7 @@ type acti = {
   polyline: string,
   intersection_polyline: string,
   intersection_polylines: string[],
-  start_end_points: string,
+  substrings: string[],
 }
 
 const TrailSummary = ({ routeName }: TrailSummaryProps) => {
@@ -61,18 +62,24 @@ const TrailSummary = ({ routeName }: TrailSummaryProps) => {
     return <p>Loading...</p>
   }
 
+  const allSubstrings = relevantActivities.reduce((acc: string[], a) => {
+    return acc.concat(a.substrings)
+  }, [])
+
   return <>
     <h1>{route.display_name}</h1>
     {/* TODO: Use a special map type as the main display map */}
-    <SummaryMap polyline={route.polyline} />
+    <SummaryMap polyline={route.polyline} overlayPolylines={allSubstrings} />
     {relevantActivities.length < 1 ? <p>No relevant activities found</p> : <>
       <p>Basing calculations on:</p>
       <ul style={{ display: 'flex', flexWrap: 'wrap' }}>
         {relevantActivities.map(a => {
           if (a === undefined) return null
           return <li key={a.id} >
-            {a.name} {a.start_end_points}
-            <SummaryMap polyline={a.polyline} overlayPolylines={a.intersection_polylines} />
+            {a.name}
+            {/* {a.name} {a.substrings} */}
+            {/* <SummaryMap polyline={a.polyline} overlayPolylines={a.intersection_polylines} /> */}
+            <SummaryMap polyline={a.polyline} overlayPolylines={a.substrings} />
           </li>
         })}
       </ul>

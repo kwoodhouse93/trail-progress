@@ -13,7 +13,7 @@ const AuthStrava = () => {
 
   const redirPath = Array.isArray(redir) ? redir[0] : redir
   const authCode = Array.isArray(code) ? code[0] : code
-  const scopes = Array.isArray(scope) ? scope[0].split(',') : scope?.split(',')
+  const scopes = Array.isArray(scope) ? scope[0]?.split(',') : scope?.split(',')
 
   const [error, setError] = useState<string | undefined>(undefined)
 
