@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import pool from 'lib/database'
+import { useInsertionEffect } from 'react'
 
 const route = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
@@ -8,26 +9,53 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // TODO: Consolidate route name and route ID
-  const rows = await pool.query(relevantActivitiesQuery, [req.query.name, req.query.id])
-  // const rowDict = rows.rows.reduce((acc, row) => {
-  //   if (acc[row.id] === undefined) {
-  //     acc[row.id] = row
-  //     acc[row.id].intersection_polylines = [row.intersection_polyline]
-  //   } else {
-  //     acc[row.id].intersection_polylines.push(row.intersection_polyline)
-  //   }
-  //   return acc
-  // }, {})
-  // const data = Object.values(rowDict)
-  // res.status(200).json(data)
-
-  res.status(200).json(rows.rows)
+  const relevantActivitiesRows = await pool.query(relevantActivitiesQuery, [req.query.name, req.query.id])
+  const unionRows = await pool.query(unionQuery, [req.query.name, req.query.id])
+  const statsRows = await pool.query(statsQuery, [req.query.name, req.query.id])
+  if (statsRows.rowCount !== 1) {
+    res.status(500).json({ error: 'Unexpected number of rows returned' })
+    return
+  }
+  res.status(200).json({
+    relevantActivities: relevantActivitiesRows.rows,
+    union: unionRows.rows,
+    stats: statsRows.rows[0]
+  })
 }
 
 export default route
 
-const bufferDistanceMeters = 200
-const simplifyRange = 0.000045
+const statsQuery = `
+with
+  union_query as (
+    select
+      ST_Union(
+        route_section_track::geometry
+      )::geography as union_track
+    from route_sections
+    join activities on activities.id = route_sections.activity_id
+    where route_id = $1 and athlete_id = $2
+  )
+select
+  ST_Length(
+    union_track
+  ) as length
+from union_query
+`
+
+const unionQuery = `
+select
+  ST_AsEncodedPolyline(
+    (ST_Dump(
+      ST_Union(
+        route_section_track::geometry
+      )
+    )).geom
+  ) as polyline
+from route_sections
+join activities on activities.id = route_sections.activity_id
+where route_id = $1 and athlete_id = $2
+`
 
 const relevantActivitiesQuery = `
 with
@@ -45,45 +73,12 @@ with
       activities.name,
       ST_AsEncodedPolyline(activities.summary_track::geometry) as polyline,
       activities.summary_track as activity_track,
-      intersections.intersection_track,
-      intersections.id as intersection_id,
+      route_sections.route_section_track,
       route.track as route_track
-    from intersections
-    join activities on activities.id = intersections.activity_id
-    join route on route.id = intersections.route_id
-    where intersections.route_id = route.id and activities.athlete_id = $2
-  ),
-  start_ends as (
-    select
-      id,
-      name,
-      polyline,
-      intersection_track,
-      route_track,
-      intersection_id,
-      ST_LineLocatePoint(
-        route_track::geometry,
-        (ST_Dump(
-          ST_Boundary(
-            intersection_track::geometry
-          )
-        )).geom
-      ) as start_end_points
-    from relevants
-  ),
-  substrings as (
-    select
-      id,
-      name,
-      polyline,
-      intersection_track,
-      ST_LineSubstring(
-        route_track::geometry,
-        MIN(start_end_points),
-        MAX(start_end_points)
-      ) as substring
-    from start_ends
-    group by id, name, polyline, intersection_track, intersection_id, route_track
+    from route_sections
+    join activities on activities.id = route_sections.activity_id
+    join route on route.id = route_sections.route_id
+    where route_sections.route_id = route.id and activities.athlete_id = $2
   ),
   aggregated as (
     select
@@ -92,19 +87,12 @@ with
       polyline,
       array_agg(
         ST_AsEncodedPolyline(
-          intersection_track::geometry
-        )
-      ) as intersection_polylines,
-      array_agg(
-        ST_AsEncodedPolyline(
-          ST_CollectionExtract(
-            substring,
-            2
-          )
+          route_section_track::geometry
         )
       ) as substrings
-    from substrings
-    group by substrings.id, substrings.name, substrings.polyline
+    from relevants
+    where ST_Length(route_section_track) > 5
+    group by relevants.id, relevants.name, relevants.polyline
   )
 select * from aggregated;`
 

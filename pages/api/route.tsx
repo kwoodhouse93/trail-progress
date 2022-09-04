@@ -24,6 +24,7 @@ const selectQuery = `SELECT
   name,
   display_name,
   ST_AsEncodedPolyline(track::geometry) as polyline,
+  ST_Length(track) as length,
   description
 FROM routes
 WHERE name = $1`

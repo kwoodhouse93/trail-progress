@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Route } from 'lib/types'
 import useStrava from 'hooks/useStrava'
 import activities from 'pages/api/strava/activities'
+import { Stats } from 'fs'
+import { metersReadable } from 'lib/strava/types'
 
 type TrailSummaryProps = {
   routeName: 'swcp'
@@ -12,8 +14,6 @@ type acti = {
   id: number,
   name: string,
   polyline: string,
-  intersection_polyline: string,
-  intersection_polylines: string[],
   substrings: string[],
 }
 
@@ -27,12 +27,15 @@ const TrailSummary = ({ routeName }: TrailSummaryProps) => {
   const [route, setRoute] = useState<Route | undefined>(undefined)
   const [loading, setLoading] = useState(false)
   const [relevantActivities, setRelevantActivities] = useState<acti[]>([])
+  const [union, setUnion] = useState<{ polyline: string }[]>([])
+  const [stats, setStats] = useState<{ length: number } | undefined>(undefined)
 
   // TODO: Get this route info as static props, for a page per trail
   useEffect(() => {
     setLoading(true)
 
-    if (routeName === undefined) {
+    const athleteId = strava?.getAthlete()?.id
+    if (routeName === undefined || athleteId === undefined) {
       setLoading(false)
       return
     }
@@ -41,17 +44,15 @@ const TrailSummary = ({ routeName }: TrailSummaryProps) => {
       .then(res => res.json())
       .then(data => setRoute(data))
 
-    const athleteId = strava?.getAthlete()?.id
-
-    if (athleteId === undefined) {
-      setLoading(false)
-      return
-    }
-
     fetch(`/api/user/route?name=${routeName}&id=${athleteId}`)
       .then(res => res.json())
-      .then(data => setRelevantActivities(data))
+      .then(data => {
+        setRelevantActivities(data.relevantActivities)
+        setUnion(data.union)
+        setStats(data.stats)
+      })
       .finally(() => setLoading(false))
+
   }, [routeName, strava])
 
   if (route === undefined) {
@@ -62,12 +63,25 @@ const TrailSummary = ({ routeName }: TrailSummaryProps) => {
     return <p>Loading...</p>
   }
 
-  const allSubstrings = relevantActivities.reduce((acc: string[], a) => {
-    return acc.concat(a.substrings)
+  const allSubstrings = union.reduce((acc: string[], s) => {
+    return acc.concat(s.polyline)
   }, [])
+  console.log(union)
 
   return <>
     <h1>{route.display_name}</h1>
+    {route.description && <p>{route.description}</p>}
+    {stats !== undefined && route.length !== undefined
+      ?
+      <>
+        <p>
+          {metersReadable(stats.length)} / {metersReadable(route.length)} total
+        </p>
+        <p>
+          {((stats.length / route.length) * 100).toFixed(1)}% complete
+        </p>
+      </>
+      : null}
     {/* TODO: Use a special map type as the main display map */}
     <SummaryMap polyline={route.polyline} overlayPolylines={allSubstrings} />
     {relevantActivities.length < 1 ? <p>No relevant activities found</p> : <>
