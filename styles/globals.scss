@@ -1,0 +1,88 @@
+@import "styles/theme.scss";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Rubik:wght@900&display=swap");
+
+// --- Default styles --- //
+html {
+  font-size: 20px;
+}
+
+body {
+  font-family: Poppins, sans-serif;
+  background-color: $white;
+  color: $dark-blue;
+}
+
+h1 {
+  font-family: Rubik, sans-serif;
+  text-transform: uppercase;
+}
+
+a {
+  color: inherit;
+}
+
+a:hover,
+a:active {
+  color: $medium-blue;
+}
+
+.pageWrapper {
+  padding: 32px 24px;
+}
+
+.para {
+  margin: 16px 0;
+}
+
+// --- Reset --- //
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}

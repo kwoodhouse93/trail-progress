@@ -1,0 +1,35 @@
+@import "styles/theme.scss";
+
+.footer {
+    position: fixed;
+    bottom: 0;
+
+    filter: drop-shadow($drop-shadow);
+
+    width: 100%;
+}
+
+.innerWrapper {
+    background-color: $dark-blue;
+    color: $white;
+
+    text-align: right;
+
+    -webkit-clip-path: polygon(0 18%, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 18%, 100% 0, 100% 100%, 0 100%);
+    padding-top: 8px;
+}
+
+.name {
+    padding: 12px 88px 12px 12px;
+}
+
+.profileImage {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 1;
+    border-radius: 100%;
+    margin-top: -16px;
+    filter: drop-shadow($drop-shadow);
+}

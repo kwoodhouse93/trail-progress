@@ -1,48 +1,38 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import styles from 'styles/Home.module.css'
+import { ReactElement } from 'react'
+import { useRouter } from 'next/router'
+
+import Footer from 'components/Footer'
+import SplashLayout from 'components/layouts/SplashLayout'
+import StravaCTA from 'components/StravaCTA'
+import useStrava from 'hooks/useStrava'
+
+import styles from 'styles/Splash.module.scss'
 
 export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>TrailTracker</title>
-        <meta name="description" content="Choose a trail, and connect your Strava account to see your progress!" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+  const { authed } = useStrava()
+  const router = useRouter()
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          TrailTracker 🗺️🧭
-        </h1>
+  if (authed) {
+    router.push('/trails')
+    return null
+  }
 
-        <p className={styles.description}>
-          Choose a trail, and connect your Strava account to see your progress!
-        </p>
+  return <>
+    <p className={styles.body}>
+      Have you ever walked part of a long distance trail, and wondered...
+    </p>
+    <p className={styles.blockquote}>
+      How much have I completed?
+    </p>
 
-        <div className={styles.grid}>
-          <Link href="/swcp" passHref>
-            <a className={styles.card}>
-              <h2>South West Cost Path</h2>
-              <p>The UK’s longest and best-loved National Trail!</p>
-            </a>
-          </Link>
-        </div>
-      </main>
+    <Footer>
+      <StravaCTA caption='Find out now.' />
+    </Footer>
+  </>
+}
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
-  )
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <SplashLayout>
+    {page}
+  </SplashLayout>
 }

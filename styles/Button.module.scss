@@ -1,0 +1,31 @@
+@import "styles/theme.scss";
+
+.button {
+    display: inline-block;
+    padding: 16px 32px;
+
+    background-color: $dark-blue;
+    border-radius: $border-radius;
+    border: none;
+
+    color: $white;
+    font-size: 1em;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.15;
+
+    cursor: pointer;
+
+    transition: background-color $transition-time, border-color $transition-time;
+}
+
+.outline {
+    background-color: $white;
+    color: $dark-blue;
+    border: 1px solid $dark-blue;
+}
+
+.strava {
+    background-color: $strava-orange;
+}

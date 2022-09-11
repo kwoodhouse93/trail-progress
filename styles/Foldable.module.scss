@@ -1,0 +1,17 @@
+@import "styles/theme.scss";
+
+.wrapper {
+    border: 1px solid $dark-blue;
+    border-radius: $border-radius;
+}
+
+.childWrapper {
+    margin: 16px;
+}
+
+.button {
+    border: none;
+    width: 100%;
+    font-size: 0.9rem;
+    // font-weight: 400;
+}

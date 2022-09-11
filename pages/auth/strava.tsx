@@ -1,11 +1,9 @@
-import Head from 'next/head'
-import Image from 'next/image'
+import { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+
+import SplashLayout from 'components/layouts/SplashLayout'
 import StravaLogin from 'components/StravaLogin'
 import { exchangeCode } from 'hooks/useStrava'
-import styles from 'styles/Home.module.css'
-
 
 const AuthStrava = () => {
   const router = useRouter()
@@ -25,7 +23,7 @@ const AuthStrava = () => {
 
     // Check scopes
     if (!scopes?.includes('read') || !scopes?.includes('activity:read')) {
-      setError('You must grant read and activity:read permissions to access your Strava data.')
+      setError('You need to grant us permission to view your activities.')
       return
     }
 
@@ -44,41 +42,26 @@ const AuthStrava = () => {
   }, [router, redirPath, authCode, scopes])
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>TrailTracker</title>
-        <meta name="description" content="Choose a trail, and connect your Strava account to see your progress!" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div className='pageWrapper'>
+      <p className='para'>
+        Connecting your account...
+      </p>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Connecting your account...
-        </h1>
-
-        <div className={styles.description}>
-          {error !== undefined && <>
-            <p>{error} Please try again.</p>
-            <StravaLogin />
-          </>
-          }
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+      <div >
+        {error !== undefined && <>
+          <p>{error} Please try again.</p>
+          <StravaLogin />
+        </>
+        }
+      </div>
     </div>
   )
 }
 
 export default AuthStrava
+
+AuthStrava.getLayout = function getLayout(page: ReactElement) {
+  return <SplashLayout>
+    {page}
+  </SplashLayout>
+}

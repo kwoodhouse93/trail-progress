@@ -1,0 +1,16 @@
+.body {
+    text-align: start;
+
+    & p {
+        margin: 16px 0;
+    }
+
+    & p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.title {
+    text-align: center;
+    margin: 32px 0 16px;
+}

@@ -1,0 +1,32 @@
+@import "styles/theme.scss";
+
+.wrapper {
+    margin: 0;
+
+    filter: drop-shadow($drop-shadow);
+
+    & a {
+        text-decoration: none;
+    }
+}
+
+.innerWrapper {
+    background-color: $dark-blue;
+
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%);
+}
+
+.title {
+    margin: 0;
+    padding: 64px 16px;
+    font-size: 3rem;
+    line-height: 1.1;
+    color: $white;
+    text-align: center;
+}
+
+.title.small {
+    font-size: 1.5rem;
+    padding: 16px 16px 24px 16px;
+}

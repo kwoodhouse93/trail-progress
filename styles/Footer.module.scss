@@ -1,0 +1,18 @@
+@import "styles/theme.scss";
+
+.footer {
+    position: fixed;
+    bottom: 0;
+
+    filter: drop-shadow($drop-shadow);
+
+    width: 100%;
+}
+
+.innerWrapper {
+    background-color: $dark-blue;
+    color: $white;
+
+    -webkit-clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 100%);
+}
