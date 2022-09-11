@@ -2,6 +2,7 @@
 
 .footer {
     position: fixed;
+    z-index: 1000; // We have to do this to ensure leaflet renders underneath the footer...
     bottom: 0;
 
     filter: drop-shadow($drop-shadow);
