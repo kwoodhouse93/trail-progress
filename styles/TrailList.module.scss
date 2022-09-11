@@ -1,0 +1,15 @@
+.list {
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+
+    & li {
+        list-style: none;
+        margin: 16px 0;
+        flex: 1 1 auto;
+
+        & a {
+            display: block;
+        }
+    }
+}

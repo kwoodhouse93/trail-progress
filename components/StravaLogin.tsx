@@ -3,7 +3,13 @@ import ButtonLink from './common/ButtonLink'
 import styles from 'styles/StravaLogin.module.scss'
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID
-const hostname = (typeof window !== 'undefined') ? window.location.hostname : 'localhost:3000'
+let hostname = ''
+if (typeof window !== 'undefined') {
+  hostname = window.location.hostname
+}
+if (hostname === 'localhost') {
+  hostname = 'localhost:3000'
+}
 const loginURI = `http://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=http://${hostname}/auth/strava?redir=/&scope=read,activity:read,activity:read_all`
 
 const StravaLogin = () => {

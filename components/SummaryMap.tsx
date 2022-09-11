@@ -37,7 +37,7 @@ const SummaryMap = ({ polyline, overlayPolylines }: SummaryMapProps) => {
       ref={mapRef}
       center={center}
       zoom={10}
-      style={{ height: '200px', width: "100%" }}
+      style={{ height: '100%', width: '100%' }}
       // Disable interactions
       zoomControl={false}
       scrollWheelZoom={false}
