@@ -5,6 +5,7 @@ import useStrava from 'hooks/useStrava'
 import activities from 'pages/api/strava/activities'
 import { Stats } from 'fs'
 import { metersReadable } from 'lib/strava/types'
+import { useSummaryMap } from 'hooks/useSummaryMap'
 
 type TrailSummaryProps = {
   routeName: 'swcp'
@@ -18,10 +19,7 @@ type acti = {
 }
 
 const TrailSummary = ({ routeName }: TrailSummaryProps) => {
-  const SummaryMap = useMemo(() => dynamic(
-    () => import('components/SummaryMap'),
-    { loading: () => <p>Loading map...</p>, ssr: false, },
-  ), [])
+  const SummaryMap = useSummaryMap()
 
   const { strava } = useStrava()
   const [route, setRoute] = useState<Route | undefined>(undefined)
@@ -66,7 +64,6 @@ const TrailSummary = ({ routeName }: TrailSummaryProps) => {
   const allSubstrings = union.reduce((acc: string[], s) => {
     return acc.concat(s.polyline)
   }, [])
-  console.log(union)
 
   return <>
     <h1>{route.display_name}</h1>

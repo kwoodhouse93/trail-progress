@@ -8,7 +8,7 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  const rows = await pool.query<Route>(selectQuery, [req.query.name])
+  const rows = await pool.query<Route>(selectQuery, [req.query.id])
   if (rows.rowCount !== 1) {
     res.status(404).json({ error: 'Route not found' })
     return
