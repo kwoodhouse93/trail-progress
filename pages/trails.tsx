@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-import Layout from 'components/layouts/Layout'
+import AthleteLayout from 'components/layouts/AthleteLayout'
 import TrailList from 'components/TrailList'
 import { cn } from 'lib/styles'
 
@@ -14,7 +14,7 @@ export default function Home() {
 }
 
 Home.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>
+  return <AthleteLayout>
     {page}
-  </Layout>
+  </AthleteLayout>
 }

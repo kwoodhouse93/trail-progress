@@ -1,8 +1,13 @@
 import Head from 'next/head'
 import TitleBar from 'components/TitleBar'
 import React from 'react'
+import useStrava from 'hooks/useStrava'
+import AthleteFooter from 'components/AthleteFooter'
 
-const Layout = ({ children }: React.PropsWithChildren<any>) => {
+const AthleteLayout = ({ children }: React.PropsWithChildren<any>) => {
+  const { strava } = useStrava()
+  const athlete = strava?.getAthlete()
+
   return (
     <>
       <Head>
@@ -15,8 +20,9 @@ const Layout = ({ children }: React.PropsWithChildren<any>) => {
       <main>
         {children}
       </main>
+      <AthleteFooter athlete={athlete} />
     </>
   )
 }
 
-export default Layout
+export default AthleteLayout

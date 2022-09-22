@@ -95,16 +95,22 @@ const activities = async () => {
   return data
 }
 
+const signOut = () => {
+  localStorage.removeItem('strava_auth')
+}
+
 interface StravaAPI {
   isAuthed: () => Promise<boolean>
   getAthlete: () => Athlete
   activities: () => Promise<Activity[]>
+  signOut: () => void
 }
 
 const strava: StravaAPI = {
   isAuthed: isAuthed,
   getAthlete: () => getAuth()?.athlete,
   activities: activities,
+  signOut: signOut,
 }
 
 const useStrava = () => {

@@ -1,7 +1,7 @@
 import { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import Layout from 'components/layouts/Layout'
+import AthleteLayout from 'components/layouts/AthleteLayout'
 import { Route } from 'lib/types'
 import { useSummaryMap } from 'hooks/useSummaryMap'
 
@@ -43,7 +43,7 @@ export default function TrailPage() {
 }
 
 TrailPage.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>
+  return <AthleteLayout>
     {page}
-  </Layout>
+  </AthleteLayout>
 }

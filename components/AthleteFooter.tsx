@@ -1,5 +1,7 @@
-import { Athlete } from 'lib/strava/types'
 import React from 'react'
+import Link from 'next/link'
+
+import { Athlete } from 'lib/strava/types'
 import styles from 'styles/AthleteFooter.module.scss'
 
 type AthleteFooterProps = {
@@ -12,17 +14,23 @@ const AthleteFooter = ({ athlete }: AthleteFooterProps) => {
   return (
     <footer className={styles.footer}>
       <div className={styles.innerWrapper}>
-        <>
-          <h3 className={styles.name}>{athlete?.firstname} {athlete?.lastname}</h3>
-        </>
+        <Link href="/account" passHref>
+          <a className={styles.nameAnchor}>
+            <h3 className={styles.name}>{athlete?.firstname} {athlete?.lastname}</h3>
+          </a>
+        </Link>
       </div>
-      <img
-        className={styles.profileImage}
-        src={athlete?.profile_medium}
-        width={64}
-        height={64}
-        alt={`Profile image for ${athlete?.firstname} ${athlete?.lastname}`}
-      />
+      <Link href="/account" passHref>
+        <a>
+          <img
+            className={styles.profileImage}
+            src={athlete?.profile_medium}
+            width={64}
+            height={64}
+            alt={`Profile image for ${athlete?.firstname} ${athlete?.lastname}`}
+          />
+        </a>
+      </Link>
     </footer>
   )
 }
