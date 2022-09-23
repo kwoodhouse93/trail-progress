@@ -13,6 +13,11 @@
 .innerWrapper {
     background-color: $dark-blue;
 
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
+}
+
+.wrapper.small > .innerWrapper {
     -webkit-clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%);
     clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%);
 }

@@ -4,7 +4,7 @@ import 'react-toggle/style.css'
 import useStrava from 'hooks/useStrava'
 import { Activity } from 'lib/strava/types'
 import ActivitySummary from 'components/ActivitySummary'
-import TrailSummary from 'components/TrailDetail'
+import TrailSummary from 'components/_TrailDetail'
 import PagedActivitySummaries from 'components/PagedActivitySummaries'
 
 const Trail = () => {

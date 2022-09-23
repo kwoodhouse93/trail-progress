@@ -3,7 +3,7 @@
 .mapWrapper {
     position: relative;
     height: 200px;
-    margin: 16px -24px 0;
+    margin: 16px -24px;
 }
 
 .map {
@@ -19,4 +19,22 @@
 
     z-index: 1000;
     box-shadow: inset $box-shadow;
+}
+
+.activityList {
+    list-style: none;
+    padding: 0;
+
+    & > li {
+        margin: 16px 0;
+    }
+}
+
+.strong {
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.activitySection {
+    margin-top: 56px;
 }

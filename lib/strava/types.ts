@@ -168,7 +168,7 @@ export const activityTypeToIcon = (type: string) => {
 
 export const metersReadable = (metres: number) => {
   if (metres < 1000) {
-    return `${metres}m`
+    return `${Math.round(metres)}m`
   } else {
     return `${(metres / 1000).toFixed(1)}km`
   }

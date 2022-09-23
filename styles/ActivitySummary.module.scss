@@ -1,0 +1,22 @@
+@import "styles/theme.scss";
+
+.wrapper {
+    position: relative;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    padding: 16px;
+}
+
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+
+.icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 1.5rem;
+}
