@@ -36,7 +36,7 @@ with
   union_query as (
     select
       ST_Union(
-        route_section_track::geometry
+        section_track::geometry
       )::geography as union_track
     from route_sections
     join activities on activities.id = route_sections.activity_id
@@ -54,7 +54,7 @@ select
   ST_AsEncodedPolyline(
     (ST_Dump(
       ST_Union(
-        route_section_track::geometry
+        section_track::geometry
       )
     )).geom
   ) as polyline
@@ -100,7 +100,7 @@ with
       activities.elev_high,
       activities.elev_low,
       activities.external_id,
-      route_sections.route_section_track,
+      route_sections.section_track,
       route.track as route_track
     from route_sections
     join activities on activities.id = route_sections.activity_id
@@ -136,16 +136,16 @@ with
       polyline,
       array_agg(
         ST_AsEncodedPolyline(
-          route_section_track::geometry
+          section_track::geometry
         )
       ) as substrings,
       ST_Length(
         ST_Union(
-          route_section_track::geometry
+          section_track::geometry
         )::geography
       ) as covered_length
     from relevants
-    where ST_Length(route_section_track) > 5
+    where ST_Length(section_track) > 5
     group by
       id,
       athlete_id,

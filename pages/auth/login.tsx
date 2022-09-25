@@ -2,6 +2,7 @@ import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
 
 import SplashLayout from 'components/layouts/SplashLayout'
+import SetupProgress from 'components/SetupProgress'
 import StravaLogin from 'components/StravaLogin'
 import useStrava from 'hooks/useStrava'
 import { cn } from 'lib/styles'
@@ -14,7 +15,8 @@ export default function Login() {
 
   if (!authed) {
     return <div className={cn('pageWrapper', styles.wrapper)}>
-      <p className='para'>
+      <SetupProgress state='connecting' />
+      <p className={cn('para', styles.connectPara)}>
         Connect your Strava account to use TrailTracker.
       </p>
       <StravaLogin />

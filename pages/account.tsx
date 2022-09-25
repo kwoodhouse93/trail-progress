@@ -5,6 +5,7 @@ import Layout from 'components/layouts/Layout'
 
 import Athlete from 'components/Athlete'
 import useStrava from 'hooks/useStrava'
+import Button from 'components/common/Button'
 
 export default function Home() {
   const { strava } = useStrava()

@@ -159,7 +159,7 @@ const toValues = (activity: Activity) => {
     activity.location_city,
     activity.location_state,
     activity.location_country,
-    activity.map.summary_polyline,
+    activity.map?.summary_polyline,
     activity.visibility,
     (Array.isArray(activity.start_latlng) ? activity.start_latlng[1] : undefined),
     (Array.isArray(activity.start_latlng) ? activity.start_latlng[0] : undefined),

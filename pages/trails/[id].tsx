@@ -55,7 +55,7 @@ export default function TrailPage() {
         setStats(data.stats)
         setActivities(data.relevantActivities)
       })
-  })
+  }, [id, strava])
 
   if (trail === undefined || stats === undefined) return null
 
@@ -88,7 +88,7 @@ export default function TrailPage() {
         Your activities on this trail
       </h3>
       <ul className={styles.activityList}>
-        {activities.map(ca => <li key={ca.activity.id}>
+        {activities.sort((a, b) => b.coveredLength - a.coveredLength).map(ca => <li key={ca.activity.id}>
           <ActivitySummary activity={ca.activity} coveredLength={ca.coveredLength} />
         </li>)}
       </ul>

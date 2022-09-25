@@ -1,0 +1,60 @@
+@import "styles/theme.scss";
+
+.wrapper {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+}
+
+.pip {
+    position: relative;
+    width: 100%;
+    margin: 0 4px;
+    font-size: 0.9rem;
+    color: $shadow;
+}
+
+.pip:first-child {
+    margin-left: 0;
+}
+.pip:last-child {
+    margin-right: 0;
+}
+
+.pip::before {
+    content: "";
+    display: block;
+    height: 12px;
+    border-radius: 6px;
+    background-color: $light-shadow;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.pip.active {
+    font-weight: 700;
+    color: $dark-blue;
+
+    &::before {
+        background-color: $medium-blue;
+    }
+
+    & > .number {
+        background-color: $dark-blue;
+        color: $white;
+    }
+}
+
+.number {
+    position: absolute;
+    top: -44px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: $light-shadow;
+    border-radius: 50%;
+    width: 32px;
+    line-height: 32px;
+    text-align: center;
+    font-weight: 700;
+}

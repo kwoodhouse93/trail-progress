@@ -1,0 +1,110 @@
+@import "styles/theme.scss";
+
+.wrapper {
+    position: relative;
+    background-color: $dark-blue;
+    margin: 64px auto 48px;
+    height: 152px;
+    width: 152px;
+    border-radius: 50%;
+    padding: 8px;
+    box-shadow: 0 6px 24px rgba(50, 50, 0, 0.4);
+
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        border: 8px solid $dark-blue;
+        filter: drop-shadow(0 0 8px rgba(50, 50, 0, 0.3));
+        top: -21px;
+        left: 36px;
+        border-radius: 50%;
+        height: 32px;
+        width: 32px;
+        z-index: -1;
+    }
+}
+
+.inner {
+    background-color: hsla(0%, 0%, 99%, 0.9);
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: inset $box-shadow;
+}
+
+@keyframes needle {
+    0% {
+        transform: rotate(207deg);
+    }
+    50% {
+        transform: rotate(32deg);
+    }
+    100% {
+        transform: rotate(207deg);
+    }
+}
+
+@keyframes impulse {
+    from {
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+    to {
+        transform: scale(5, 5);
+        opacity: 0;
+    }
+}
+
+.needleRotator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    animation: 4s needle cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+}
+
+.wrapper > .impulse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    z-index: -2;
+    background-color: $dark-blue;
+    background: radial-gradient(circle, rgba(95, 177, 191, 0) 0%, rgba(95, 177, 191, 1) 40%, rgba(95, 177, 191, 0) 60%);
+    opacity: 0.2;
+    animation: 2.5s impulse ease-out 1;
+}
+
+.needle {
+    position: absolute;
+    width: 20px;
+    height: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    filter: drop-shadow($drop-shadow);
+}
+
+.needle::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    top: 0;
+    background-color: $strava-orange;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.needle::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    top: 50%;
+    background-color: $medium-blue;
+    clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+}

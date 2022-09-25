@@ -12,7 +12,7 @@ const TrailList = () => {
     fetch('/api/routes')
       .then(res => res.json())
       .then(data => setTrails(data))
-  })
+  }, [])
 
   if (trails.length === 0) {
     return null

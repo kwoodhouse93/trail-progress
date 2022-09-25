@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
-import Trail from 'components/Trail'
+import Trail from 'components/_Trail'
 import useStrava from 'hooks/useStrava'
 import styles from 'styles/Home.module.css'
 

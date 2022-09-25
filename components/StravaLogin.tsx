@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
 if (hostname === 'localhost') {
   hostname = 'localhost:3000'
 }
-const loginURI = `http://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=http://${hostname}/auth/strava?redir=/&scope=read,activity:read,activity:read_all`
+const loginURI = `http://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=http://${hostname}/auth/strava?redir=/backfill&scope=read,activity:read,activity:read_all`
 
 const StravaLogin = () => {
   return <>
