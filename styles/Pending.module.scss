@@ -1,0 +1,8 @@
+.wrapper {
+    // margin-top: 32px;
+    text-align: center;
+
+    & > p {
+        margin: 24px 0 32px;
+    }
+}

@@ -14,7 +14,7 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
   const unionRows = await pool.query(unionQuery, [req.query.route_id, req.query.athlete_id])
   const statsRows = await pool.query(statsQuery, [req.query.route_id, req.query.athlete_id])
   if (statsRows.rowCount !== 1) {
-    res.status(500).json({ error: 'Unexpected number of rows returned' })
+    res.status(500).json({ error: 'unexpected number of rows returned' })
     return
   }
   res.status(200).json({

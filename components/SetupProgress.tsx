@@ -12,11 +12,16 @@ const SetupProgress = ({ state }: SetupProgressProps) => {
   const processingClasses = [styles.pip]
 
   switch (state) {
-    case 'processing':
-      processingClasses.push(styles.active)
-    case 'backfill':
-      backfillClasses.push(styles.active)
     case 'connecting':
+      connectClasses.push(styles.active, styles.last)
+      break
+    case 'backfill':
+      backfillClasses.push(styles.active, styles.last)
+      connectClasses.push(styles.active)
+      break
+    case 'processing':
+      processingClasses.push(styles.active, styles.last)
+      backfillClasses.push(styles.active)
       connectClasses.push(styles.active)
       break
   }

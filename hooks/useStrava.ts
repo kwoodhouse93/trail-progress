@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+
 import { Activity, Athlete } from 'lib/strava/types'
 import { checkErrors } from 'lib/strava/api'
+import pool from 'lib/database'
 
 export const requiredScopes = ['read', 'activity:read']
 
@@ -60,6 +62,13 @@ export const exchangeCode = (code: string) => {
     .then(data => data.json())
     .then(data => {
       localStorage.setItem('strava_auth', JSON.stringify(data))
+      return data
+    })
+    .then(data => {
+      fetch('/api/user/athlete', {
+        method: 'POST',
+        body: JSON.stringify({ id: data.athlete.id })
+      })
     })
     .catch(e => e)
 }

@@ -10,6 +10,7 @@ import CoverageBar from 'components/CoverageBar'
 
 import styles from 'styles/TrailPage.module.scss'
 import ActivitySummary from 'components/ActivitySummary'
+import useAthlete from 'hooks/useAthlete'
 
 type Stats = {
   length: number
@@ -28,12 +29,21 @@ export default function TrailPage() {
   const router = useRouter()
   const { id } = router.query
 
+  const athlete = useAthlete()
   const { strava } = useStrava()
 
   const [trail, setTrail] = useState<Route | undefined>(undefined)
   const [coverage, setCoverage] = useState<string[] | undefined>(undefined)
   const [stats, setStats] = useState<Stats | undefined>(undefined)
   const [activities, setActivities] = useState<CoverageActivity[]>([])
+
+  useEffect(() => {
+    if (athlete === undefined) return
+    if (athlete.backfill_status !== 'complete') {
+      router.push('/pending')
+      return
+    }
+  }, [athlete, router])
 
   useEffect(() => {
     if (id === undefined) {

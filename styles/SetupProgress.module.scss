@@ -36,14 +36,36 @@
     font-weight: 700;
     color: $dark-blue;
 
-    &::before {
+    &::after {
+        position: absolute;
+        top: 0;
+        content: "";
+        display: block;
+        height: 12px;
+        border-radius: 6px;
         background-color: $medium-blue;
+        width: 100%;
+        margin-bottom: 8px;
     }
 
     & > .number {
         background-color: $dark-blue;
         color: $white;
     }
+}
+
+@keyframes side-entrance {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.pip.active.last:after {
+    transform-origin: 0% 50%;
+    animation: 0.8s side-entrance ease-out 1;
 }
 
 .number {
