@@ -11,8 +11,13 @@ import styles from 'styles/Trails.module.scss'
 export default function Trails() {
   const router = useRouter()
   const athlete = useAthlete()
+
   useEffect(() => {
     if (athlete === undefined) return
+    if (athlete === null) {
+      router.push('/')
+      return
+    }
     if (athlete.backfill_status !== 'complete') {
       router.push('/pending')
       return

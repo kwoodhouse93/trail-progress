@@ -15,7 +15,7 @@ type AthleteAPI = {
   completeBackfill: () => void
 }
 
-type SetAthleteFn = React.Dispatch<React.SetStateAction<Athlete | undefined>>
+type SetAthleteFn = React.Dispatch<React.SetStateAction<Athlete | null | undefined>>
 
 const startBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn) => {
   if (athlete.backfill_status === 'started') {
@@ -57,22 +57,39 @@ const completeBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn) => {
   setAthlete(data)
 }
 
-const useAthlete: () => AthleteAPI | undefined = () => {
+const useAthlete: () => AthleteAPI | null | undefined = () => {
   const { strava } = useStrava()
-  const [athlete, setAthlete] = useState<Athlete | undefined>(undefined)
+  const [athlete, setAthlete] = useState<Athlete | null | undefined>(undefined)
 
   useEffect(() => {
     if (strava === undefined) return
     const stravaAthlete = strava.getAthlete()
+    if (stravaAthlete === undefined) {
+      setAthlete(null)
+      return
+    }
 
     const fetchAthlete = async () => {
-      const res = await fetch(`/api/user/athlete?id=${stravaAthlete.id}`)
-      const data = await res.json()
-      setAthlete(data)
+      try {
+        const res = await fetch(`/api/user/athlete?id=${stravaAthlete.id}`)
+        if (!res.ok) {
+          localStorage.removeItem('strava_auth')
+          setAthlete(null)
+          return
+        }
+        const data = await res.json()
+        setAthlete(data)
+      } catch (e) {
+        console.error(e)
+        // The logged in athlete and our own records aren't in sync.
+        // Try forcing the user back through Strava OAuth.
+        localStorage.removeItem('strava_auth')
+      }
     }
     fetchAthlete()
   }, [strava])
 
+  if (athlete === null) return null
   if (athlete === undefined) return undefined
 
   return {

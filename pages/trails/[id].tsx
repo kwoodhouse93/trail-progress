@@ -39,6 +39,10 @@ export default function TrailPage() {
 
   useEffect(() => {
     if (athlete === undefined) return
+    if (athlete === null) {
+      router.push('/')
+      return
+    }
     if (athlete.backfill_status !== 'complete') {
       router.push('/pending')
       return
@@ -58,6 +62,9 @@ export default function TrailPage() {
     if (id === undefined || strava === undefined) {
       return
     }
+    const stravaAthlete = strava.getAthlete()
+    if (stravaAthlete === undefined) return
+
     fetch(`/api/user/route?route_id=${id}&athlete_id=${strava.getAthlete().id}`)
       .then(res => res.json())
       .then(data => {

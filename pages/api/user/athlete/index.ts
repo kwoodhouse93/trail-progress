@@ -46,12 +46,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const rows = await pool.query(insertQuery, [reqBody.id])
-  if (rows.rowCount !== 1) {
-    res.status(404).json({ error: 'athlete not found' })
-    return
-  }
-
-  res.status(200).json(rows.rows[0])
+  res.status(200).json({})
   return
 }
 
@@ -64,6 +59,6 @@ WHERE
   id = $1`
 
 const insertQuery = `INSERT INTO athletes (id) VALUES ($1)
-RETURNING id, backfill_status`
+ON CONFLICT DO NOTHING`
 
 export default athlete

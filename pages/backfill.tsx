@@ -25,6 +25,10 @@ export default function Backfill() {
   useEffect(() => {
     if (strava === undefined) return
     if (athlete === undefined) return
+    if (athlete === null) {
+      router.push('/')
+      return
+    }
 
     switch (athlete.backfill_status) {
       case 'not_started':
@@ -40,11 +44,15 @@ export default function Backfill() {
               method: 'POST',
               body: JSON.stringify(activities),
             })
-              .then(() => {
-                athlete.completeBackfill()
+              .then(response => {
+                if (response.ok) {
+                  athlete.completeBackfill()
+                } else {
+                  setError('Something went wrong.')
+                }
               })
           })
-          .catch(e => setError(e))
+          .catch(e => setError(e.message))
         break
       case 'complete':
         router.push('/trails')
@@ -104,7 +112,7 @@ export default function Backfill() {
     <Spinner impulse={status === 'postgres' || status === 'done'} />
     <div className={styles.contentWrapper}>
       {content(status)}
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className={styles.error}>{error} <Link href="/">Please try again.</Link></p>}
     </div>
   </div>
 }
