@@ -17,7 +17,7 @@ const activities = async (req: NextApiRequest, res: NextApiResponse) => {
   // TODO: Report an error if rate limits hit
   // TODO: Test more error cases - do we always throw on error?
   try {
-    const data = await fetch(`https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=200&access_token=${access_token}`)
+    const data = await fetch(`https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=100&access_token=${access_token}`)
       .then(logRateLimits)
       .then(checkErrors)
       .then(data => data.json())
