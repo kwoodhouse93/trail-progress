@@ -91,13 +91,13 @@ const refresh = (auth: StravaAuth) => {
     .catch(e => e)
 }
 
-const activities = async () => {
+const activities = async (page: number) => {
   const auth = getAuth()
   if (auth === undefined) {
     return undefined
   }
 
-  const data = await fetch('/api/strava/activities', { headers: { 'Authorization': `Bearer ${auth.access_token}` } })
+  const data = await fetch(`/api/strava/activities?page=${page}`, { headers: { 'Authorization': `Bearer ${auth.access_token}` } })
     .then(checkErrors)
     .then(data => data.json())
 
@@ -111,7 +111,7 @@ const signOut = () => {
 interface StravaAPI {
   isAuthed: () => Promise<boolean>
   getAthlete: () => Athlete
-  activities: () => Promise<Activity[]>
+  activities: (page: number) => Promise<Activity[]>
   signOut: () => void
 }
 

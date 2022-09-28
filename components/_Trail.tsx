@@ -34,7 +34,7 @@ const Trail = () => {
 
   const backfill = () => {
     console.log('Starting backfill')
-    strava?.activities()
+    strava?.activities(1)
       .then(activities => {
         setActivities(activities)
         fetch('/api/user/activities', {
@@ -46,7 +46,7 @@ const Trail = () => {
   }
 
   const callStrava = () => {
-    strava?.activities().then(d => console.log(d)).catch(e => console.error(e))
+    strava?.activities(1).then(d => console.log(d)).catch(e => console.error(e))
   }
 
   useEffect(() => {

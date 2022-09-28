@@ -1,51 +1,28 @@
-Main tasks:
-1. Create client-side backfill method
-2. Load activities and polylines into the database
-3. Create query for getting SWCP completion based on the user's activity polylines, without caching or background processing
-4. Build the stats UI based on polylines query
-5. Look into pulling streams and processing these in addition to polylines
-6. Optimise (e.g. using materialised views or triggers).
+TODO:
 
-Q: When should a user's activities get loaded into the DB?
-A: Starting from when they first log in with Strava.
+HIGH (essential)
+- Fix timeouts in backfill
+    - Store activities to DB in pages as a single batch is too slow
+    - Consider using a single COPY instead of hundreds of INSERT statements
 
-Q: How do we start the process of fetching the users activities when they log in?
-A: We need their access token, and then we can fetch the list of all their activities.
-We can store this list in the DB.
-From there, we can trigger a function (in the DB? on the server? clientside?) to loop over each and
-get the stream data, storing that in the DB too. Once all activities (from the list) have had a track
-fetched, we can stop. We could query to see how many activities have been downloaded so far and resume
-the process if necessary. Essentially, we want to backfill stream data after already fetching all the
-activities. Also want to respect rate limits, etc
+MEDIUM (needed before launch)
+- Implement removal of user data (on Strava webhook, plus a 'Delete account' button in /account?)
+- Implement Strava webhooks for receiving new events
+- Add more trails
+- Find a way to show background processing in progress / completion
 
-Possible architectures:
-- Single background processor
-    Manage overall rate limits and ensure users each get a turn at downloading data.
+LOW (nice to have)
+- Add headline stats for each trail on /trails page
+- Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
+- Check and respect rate limits to avoid overuse
+- Add activity count to /account
+- Check user is redirected to / if not authed on all pages (e.g. /pending)
+- Add favicon and Strava app icon
+- Review screens that flash content - consider global loading state?
+- Add user settings for units and activity types to include
 
-- Serverless process per user
-    A function/process per user, kicked off when user logs in.
-    + Simpler to track progress per user
-    - Trickier to manage rate limits across many users
-
-Got an architecture choice at this point...
-
-For each user, when they log in, we can use their access_token to get their activity data from Strava.
-
-So we want to make 1 or more requests to Strava to get their list of activities. Then based off that list,
-for each activity, we want to check if it's relevant to any of the long distance trails we care about, and
-if it is, get the position stream (latlong) and start computing overlap with the relevant trail.
-
-[strava login]--> access_token
-[access_token]--> activities
-[activities -> activity]-map->routes-[route/activity match]
-[route/activity match]--> route overlap
-(activities --> route overlap)->[route overlaps]--> summary stats
-
-TODO: Set up OAuth in deployment (including redirects not just to localhost)
-TODO: Look into Prisma?
-TODO: Implement deauth? Not sure it makes sense, but maybe just delete any local copies of the token if 401 Unauthorized is received?
-TODO: Check and respect rate limits to avoid overuse
-TODO: STYLING ✨
-TODO: Implement Strava brand guidelines
-TODO: Allow user to log out or change accounts
-TODO: Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
+VERY LOW (do at some point)
+- Look into pulling streams and processing these in addition to polylines - is it really necessary? What's the max. privacy area on Strava?
+- Check we meet Strava brand guidelines
+- Dark mode
+- Consider alternative map tiles / mapping library

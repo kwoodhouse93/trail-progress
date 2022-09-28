@@ -11,25 +11,18 @@ const activities = async (req: NextApiRequest, res: NextApiResponse) => {
   // Take token after Bearer part
   const access_token = auth.split(' ')[1]
 
-  const activities: Activity[] = []
-  let done = false
+  // Default to first page if page parameter not provided
+  let page = req.query.page || 1
 
-  // TODO: Break out if rate limits hit
+  // TODO: Report an error if rate limits hit
   // TODO: Test more error cases - do we always throw on error?
   try {
-    for (let page = 1; !done; page++) {
-      const data = await fetch(`https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=200&access_token=${access_token}`)
-        .then(logRateLimits)
-        .then(checkErrors)
-        .then(data => data.json())
+    const data = await fetch(`https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=200&access_token=${access_token}`)
+      .then(logRateLimits)
+      .then(checkErrors)
+      .then(data => data.json())
 
-      if (data.length === 0) {
-        done = true
-      } else {
-        activities.push(...data)
-      }
-    }
-    res.status(200).json(activities)
+    res.status(200).json(data)
   } catch (e) {
     if (e instanceof StravaError) {
       res.status(e.code).send(e.detail)

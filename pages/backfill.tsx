@@ -10,8 +10,9 @@ import styles from 'styles/Backfill.module.scss'
 import Spinner from 'components/Spinner'
 import useAthlete from 'hooks/useAthlete'
 import AfterDelay from 'components/AfterDelay'
+import { doesNotMatch } from 'assert'
 
-type Status = 'default' | 'strava' | 'postgres' | 'done'
+type Status = 'default' | 'backfill' | 'process' | 'done'
 
 export default function Backfill() {
   const { strava } = useStrava()
@@ -21,6 +22,38 @@ export default function Backfill() {
   const [status, setStatus] = useState<Status>('default')
   const [activityCount, setActivityCount] = useState<number>(0)
   const [error, setError] = useState<string | undefined>(undefined)
+
+  const backfillActivities = async () => {
+    if (athlete === undefined || athlete === null || strava === undefined) return
+
+    try {
+      for (let page = 1, done = false; !done; page++) {
+        const activities = await strava.activities(page)
+
+        // Stop if there are no activities left.
+        if (activities.length === 0) {
+          done = true
+          athlete.completeBackfill()
+          return
+        }
+
+        setActivityCount(c => c + activities.length)
+
+        // Dispatch storing in DB asynchronously so we can fetch more activities in parallel.
+        fetch('/api/user/activities', {
+          method: 'POST',
+          body: JSON.stringify(activities),
+        }).then(res => {
+          if (!res.ok) {
+            setError('Something went wrong.')
+            return
+          }
+        })
+      }
+    } catch (e: any) {
+      setError(e.message)
+    }
+  }
 
   useEffect(() => {
     if (strava === undefined) return
@@ -35,28 +68,12 @@ export default function Backfill() {
         athlete.startBackfill()
         break
       case 'started':
-        setStatus('strava')
-        strava?.activities()
-          .then(activities => {
-            setActivityCount(activities.length)
-            setStatus('postgres')
-            fetch('/api/user/activities', {
-              method: 'POST',
-              body: JSON.stringify(activities),
-            })
-              .then(response => {
-                if (response.ok) {
-                  athlete.completeBackfill()
-                } else {
-                  setError('Something went wrong.')
-                }
-              })
-          })
-          .catch(e => setError(e.message))
+        setStatus('backfill')
+        backfillActivities()
         break
       case 'complete':
         router.push('/trails')
-        setStatus('done')
+        setStatus('process')
         break
     }
     // TODO: Check what happens if account has 0 activities
@@ -74,9 +91,9 @@ export default function Backfill() {
             </p>
           </AfterDelay>
         </>
-      case 'strava':
+      case 'backfill':
         return <p>Fetching your activities from Strava...</p>
-      case 'postgres':
+      case 'process':
         return <>
           <p>Loaded {activityCount} activities.</p>
           <p>Just crunching the numbers...</p>
@@ -96,9 +113,9 @@ export default function Backfill() {
     switch (status) {
       case 'default':
         return 'connecting'
-      case 'strava':
+      case 'backfill':
         return 'backfill'
-      case 'postgres':
+      case 'process':
         return 'processing'
       case 'done':
         return 'processing'
@@ -109,7 +126,7 @@ export default function Backfill() {
 
   return <div className="pageWrapper">
     <SetupProgress state={statusToState(status)} />
-    <Spinner impulse={status === 'postgres' || status === 'done'} />
+    <Spinner impulse={status === 'process' || status === 'done'} />
     <div className={styles.contentWrapper}>
       {content(status)}
       {error && <p className={styles.error}>{error} <Link href="/">Please try again.</Link></p>}
