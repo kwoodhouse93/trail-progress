@@ -2,14 +2,15 @@ TODO:
 
 HIGH (essential)
 - Fix timeouts in backfill
-    - Store activities to DB in pages as a single batch is too slow
     - Consider using a single COPY instead of hundreds of INSERT statements
+- If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 
 MEDIUM (needed before launch)
 - Implement removal of user data (on Strava webhook, plus a 'Delete account' button in /account?)
 - Implement Strava webhooks for receiving new events
 - Add more trails
 - Find a way to show background processing in progress / completion
+- Setting map zoom level seems to work locally but not when deployed... Weird
 
 LOW (nice to have)
 - Add headline stats for each trail on /trails page

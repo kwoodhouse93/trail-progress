@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { checkErrors, logRateLimits, StravaError } from 'lib/strava/api'
-import { Activity } from 'lib/strava/types'
 
 const activities = async (req: NextApiRequest, res: NextApiResponse) => {
   const auth = req.headers.authorization
