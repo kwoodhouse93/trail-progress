@@ -31,11 +31,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  const client = await pool.connect()
-
   try {
-    await client.query('BEGIN')
-
     const valuesStatements = []
     const params = []
     let i = 1
@@ -73,18 +69,12 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
       i += 29
     }
     const query = insertQueryStart + valuesStatements.join(', ') + insertQueryEnd
-    await client.query(query, params)
-
-    await client.query('COMMIT')
+    await pool.query(query, params)
     res.status(200).json({})
 
   } catch (e) {
-    await client.query('ROLLBACK')
     res.status(500).json({ error: e })
     throw e
-
-  } finally {
-    client.release()
   }
 }
 
