@@ -11,6 +11,7 @@ MEDIUM (needed before launch)
 - Add more trails
 - Find a way to show background processing in progress / completion
 - Setting map zoom level seems to work locally but not when deployed... Weird
+- API Authentication / RLS
 
 LOW (nice to have)
 - Add headline stats for each trail on /trails page

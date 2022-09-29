@@ -36,9 +36,44 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     await client.query('BEGIN')
 
+    const valuesStatements = []
+    const params = []
+    let i = 1
     for (const activity of data) {
-      await client.query(insertQuery, toValues(activity))
+      valuesStatements.push(`(
+        $${i},
+        $${i + 1},
+        $${i + 2},
+        $${i + 3},
+        $${i + 4},
+        $${i + 5},
+        $${i + 6},
+        $${i + 7},
+        $${i + 8},
+        $${i + 9},
+        $${i + 10},
+        $${i + 11},
+        $${i + 12},
+        ST_LineFromEncodedPolyline($${i + 13}),
+        $${i + 14},
+        ST_Point($${i + 15}, $${i + 16}),
+        ST_Point($${i + 17}, $${i + 18}),
+        $${i + 19},
+        $${i + 20},
+        $${i + 21},
+        $${i + 22},
+        $${i + 23},
+        $${i + 24},
+        $${i + 25},
+        $${i + 26},
+        $${i + 27},
+        $${i + 28}
+      )`)
+      params.push(...toValues(activity))
+      i += 29
     }
+    const query = insertQueryStart + valuesStatements.join(', ') + insertQueryEnd
+    await client.query(query, params)
 
     await client.query('COMMIT')
     res.status(200).json({})
@@ -86,7 +121,7 @@ const selectQuery = `SELECT
 FROM activities
 WHERE athlete_id = $1`
 
-const insertQuery = `INSERT INTO activities (
+const insertQueryStart = `INSERT INTO activities (
   id,
   athlete_id,
   name,
@@ -114,35 +149,8 @@ const insertQuery = `INSERT INTO activities (
   elev_high,
   elev_low,
   external_id
-) VALUES (
-  $1,
-  $2,
-  $3,
-  $4,
-  $5,
-  $6,
-  $7,
-  $8,
-  $9,
-  $10,
-  $11,
-  $12,
-  $13,
-  ST_LineFromEncodedPolyline($14),
-  $15,
-  ST_Point($16, $17),
-  ST_Point($18, $19),
-  $20,
-  $21,
-  $22,
-  $23,
-  $24,
-  $25,
-  $26,
-  $27,
-  $28,
-  $29
-) ON CONFLICT DO NOTHING`
+) VALUES `
+const insertQueryEnd = ` ON CONFLICT DO NOTHING`
 
 const toValues = (activity: Activity) => {
   return [
