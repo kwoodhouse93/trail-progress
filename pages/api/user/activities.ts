@@ -143,6 +143,9 @@ const insertQueryStart = `INSERT INTO activities (
 const insertQueryEnd = ` ON CONFLICT DO NOTHING`
 
 const toValues = (activity: Activity) => {
+  let polyline: string | undefined = activity.map?.summary_polyline
+  if (polyline === '') polyline = undefined
+
   return [
     activity.id,
     activity.athlete.id,
@@ -157,7 +160,7 @@ const toValues = (activity: Activity) => {
     activity.location_city,
     activity.location_state,
     activity.location_country,
-    activity.map?.summary_polyline,
+    polyline,
     activity.visibility,
     (Array.isArray(activity.start_latlng) ? activity.start_latlng[1] : undefined),
     (Array.isArray(activity.start_latlng) ? activity.start_latlng[0] : undefined),
