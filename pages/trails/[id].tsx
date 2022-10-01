@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import { Route } from 'lib/types'
 import { Activity, metersReadable } from 'lib/strava/types'
-import { useSummaryMap } from 'hooks/useSummaryMap'
+import { useDetailMap } from 'hooks/useDetailMap'
 import useStrava from 'hooks/useStrava'
 import AthleteLayout from 'components/layouts/AthleteLayout'
 import CoverageBar from 'components/CoverageBar'
@@ -24,7 +24,7 @@ type CoverageActivity = {
 }
 
 export default function TrailPage() {
-  const SummaryMap = useSummaryMap()
+  const DetailMap = useDetailMap()
 
   const router = useRouter()
   const { id } = router.query
@@ -87,7 +87,7 @@ export default function TrailPage() {
 
     <div className={styles.mapWrapper}>
       <div className={styles.map}>
-        <SummaryMap polyline={trail.polyline} overlayPolylines={coverage} />
+        <DetailMap polyline={trail.polyline} overlayPolylines={coverage} />
       </div>
     </div>
 
