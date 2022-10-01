@@ -65,7 +65,7 @@ export default function TrailPage() {
     const stravaAthlete = strava.getAthlete()
     if (stravaAthlete === undefined) return
 
-    fetch(`/api/user/route?route_id=${id}&athlete_id=${strava.getAthlete().id}`)
+    fetch(`/api/user/route?route_id=${id}&athlete_id=${stravaAthlete.id}`)
       .then(res => res.json())
       .then(data => {
         setCoverage(data.union.map((u: { polyline: string }) => u.polyline))

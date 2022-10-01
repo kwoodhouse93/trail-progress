@@ -110,7 +110,7 @@ const signOut = () => {
 
 interface StravaAPI {
   isAuthed: () => Promise<boolean>
-  getAthlete: () => Athlete
+  getAthlete: () => Athlete | undefined
   activities: (page: number) => Promise<Activity[]>
   signOut: () => void
 }

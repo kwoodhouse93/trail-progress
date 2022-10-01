@@ -2,14 +2,20 @@
     padding: 0;
     display: flex;
     flex-wrap: wrap;
+    margin: 8px -8px;
+    justify-content: space-between;
 
     & li {
         list-style: none;
-        margin: 16px 0;
-        flex: 1 1 auto;
+        margin: 8px 8px;
+        flex: 1 1 368px;
 
         & a {
             display: block;
         }
     }
+}
+
+.summary {
+    margin: 0 auto;
 }

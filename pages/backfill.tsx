@@ -20,6 +20,7 @@ export default function Backfill() {
   const router = useRouter()
 
   const [status, setStatus] = useState<Status>('default')
+  const [dirty, setDirty] = useState(false)
   const [activityCount, setActivityCount] = useState<number>(0)
   const [error, setError] = useState<string | undefined>(undefined)
 
@@ -72,13 +73,30 @@ export default function Backfill() {
         backfillActivities()
         break
       case 'complete':
-        router.push('/trails')
+        setDirty(true)
         setStatus('process')
         break
     }
     // TODO: Check what happens if account has 0 activities
   }, [strava, athlete?.id, athlete?.backfill_status, router])
 
+  useEffect(() => {
+    if (strava === undefined) return
+    const athlete = strava.getAthlete()
+    if (athlete === undefined) return
+    if (!dirty) return
+
+    setDirty(false)
+    fetch(`/api/user/processing?id=${athlete.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.length === 0) {
+          router.push('/trails')
+          return
+        }
+        setTimeout(() => setDirty(true), 2000)
+      })
+  }, [strava, dirty])
 
   const content = (status: Status) => {
     switch (status) {
