@@ -6,6 +6,7 @@ import { Route } from 'lib/types'
 import { useSummaryMap } from 'hooks/useSummaryMap'
 
 import styles from 'styles/TrailSummary.module.scss'
+import { metersReadable } from 'lib/strava/types'
 
 type TrailSummaryProps = {
   trail: Route
@@ -28,6 +29,17 @@ const TrailSummary = ({ trail, pending, className }: TrailSummaryProps & React.H
     </div>
   }
 
+  let caption = null
+  if (trail.length !== undefined && trail.covered_length !== undefined) {
+    caption = <div className={styles.captionWrapper}>
+      <p className={styles.caption}>{metersReadable(trail.covered_length)} / {metersReadable(trail.length)}</p>
+    </div>
+    if (trail.covered_length === 0) {
+      caption = <div className={styles.captionWrapper}>
+        <p className={styles.caption}>Not visited</p>
+      </div>
+    }
+  }
   return (
     <Link href={`/trails/${trail.id}`} passHref>
       <a className={cn(className, styles.wrapper)}>
@@ -35,6 +47,7 @@ const TrailSummary = ({ trail, pending, className }: TrailSummaryProps & React.H
           <h3 className={styles.title}>{trail.display_name}</h3>
         </div>
         <SummaryMap polyline={trail.polyline} />
+        {caption}
       </a>
     </Link>
   )

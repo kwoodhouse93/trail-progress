@@ -1,30 +1,32 @@
 TODO:
 
-HIGH (essential)
-- Fix timeouts in backfill
-    - Consider using a single COPY instead of hundreds of INSERT statements
-- If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
+NOW
+- Add headline stats for each trail on /trails page
 
 MEDIUM (needed before launch)
+- If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Implement removal of user data (on Strava webhook, plus a 'Delete account' button in /account?)
 - Implement Strava webhooks for receiving new events
 - Add more trails
-- Find a way to show background processing in progress / completion
+- Show background processing completion on /trails/[id]
 - Setting map zoom level seems to work locally but not when deployed... Weird
 - API Authentication / RLS
+- Fix the 'something went wrong' that flashes up during login
+- Add favicon and Strava app icon
 
 LOW (nice to have)
-- Add headline stats for each trail on /trails page
-- Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
+- Explain when user has not started a trail
+- Explain when user has completed a trail
 - Check and respect rate limits to avoid overuse
-- Add activity count to /account
+- Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
 - Check user is redirected to / if not authed on all pages (e.g. /pending)
-- Add favicon and Strava app icon
+- Add activity count to /account
 - Review screens that flash content - consider global loading state?
 - Add user settings for units and activity types to include
+- Break down processing so more activity/route pairs can be marked as processed sooner
 
 VERY LOW (do at some point)
 - Look into pulling streams and processing these in addition to polylines - is it really necessary? What's the max. privacy area on Strava?
 - Check we meet Strava brand guidelines
-- Dark mode
 - Consider alternative map tiles / mapping library
+- Dark mode

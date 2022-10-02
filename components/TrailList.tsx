@@ -13,10 +13,12 @@ const TrailList = () => {
   const [dirty, setDirty] = useState(true)
 
   useEffect(() => {
-    fetch('/api/routes')
+    const stravaAthlete = strava?.getAthlete()
+    if (stravaAthlete === undefined) return
+    fetch(`/api/user/routes?id=${stravaAthlete.id}`)
       .then(res => res.json())
       .then(data => setTrails(data))
-  }, [])
+  }, [strava])
 
   useEffect(() => {
     if (trails === undefined || strava === undefined) return
@@ -35,7 +37,7 @@ const TrailList = () => {
       })
   }, [trails, strava, dirty])
 
-  if (trails.length === 0) {
+  if (trails?.length === 0) {
     return null
   }
 

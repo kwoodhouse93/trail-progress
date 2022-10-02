@@ -4,4 +4,5 @@ export type Route = {
   polyline: string
   description?: string
   length?: number
+  covered_length?: number
 }
