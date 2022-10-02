@@ -31,8 +31,9 @@ const TrailSummary = ({ trail, pending, className }: TrailSummaryProps & React.H
 
   let caption = null
   if (trail.length !== undefined && trail.covered_length !== undefined) {
+    const percent = Math.round(trail.covered_length / trail.length * 100)
     caption = <div className={styles.captionWrapper}>
-      <p className={styles.caption}>{metersReadable(trail.covered_length)} / {metersReadable(trail.length)}</p>
+      <p className={styles.caption}>{percent}% complete</p>
     </div>
     if (trail.covered_length === 0) {
       caption = <div className={styles.captionWrapper}>
@@ -45,6 +46,7 @@ const TrailSummary = ({ trail, pending, className }: TrailSummaryProps & React.H
       <a className={cn(className, styles.wrapper)}>
         <div className={styles.titleWrapper}>
           <h3 className={styles.title}>{trail.display_name}</h3>
+          {trail.length !== undefined && <p className={styles.subtitle}>{metersReadable(trail.length)}</p>}
         </div>
         <SummaryMap polyline={trail.polyline} />
         {caption}

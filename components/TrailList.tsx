@@ -10,32 +10,43 @@ const TrailList = () => {
   const { strava } = useStrava()
   const [trails, setTrails] = useState<Route[]>([])
   const [unprocessed, setUnprocessed] = useState<string[]>([])
-  const [dirty, setDirty] = useState(true)
+  const [pollProcessing, setPollProcessing] = useState(true)
+  const [fetchRoutes, setFetchRoutes] = useState(true)
 
   useEffect(() => {
+    if (!fetchRoutes) return
+
     const stravaAthlete = strava?.getAthlete()
     if (stravaAthlete === undefined) return
+
+    setFetchRoutes(false)
     fetch(`/api/user/routes?id=${stravaAthlete.id}`)
       .then(res => res.json())
-      .then(data => setTrails(data))
-  }, [strava])
+      .then(data => {
+        setTrails(data)
+      })
+  }, [strava, fetchRoutes])
 
   useEffect(() => {
+    if (!pollProcessing) return
     if (trails === undefined || strava === undefined) return
     const athlete = strava.getAthlete()
     if (athlete === undefined) return
-    if (!dirty) return
 
-    setDirty(false)
+    setPollProcessing(false)
     fetch(`/api/user/processing?id=${athlete.id}`)
       .then(res => res.json())
       .then(data => {
         setUnprocessed(data.map((s: { route_id: string, unprocessed_count: number }) => s.route_id))
         if (data.length > 0) {
-          setTimeout(() => setDirty(true), 2000)
+          // If there are still unprocessed routes, poll again in a bit
+          setTimeout(() => setPollProcessing(true), 2000)
+        } else {
+          // Make sure we fetch routes again as they should now have correct covered_length stats
+          setFetchRoutes(true)
         }
       })
-  }, [trails, strava, dirty])
+  }, [trails, strava, pollProcessing])
 
   if (trails?.length === 0) {
     return null

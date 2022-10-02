@@ -10,7 +10,6 @@ import styles from 'styles/Backfill.module.scss'
 import Spinner from 'components/Spinner'
 import useAthlete from 'hooks/useAthlete'
 import AfterDelay from 'components/AfterDelay'
-import { doesNotMatch } from 'assert'
 
 type Status = 'default' | 'backfill' | 'process' | 'done'
 
@@ -24,39 +23,41 @@ export default function Backfill() {
   const [activityCount, setActivityCount] = useState<number>(0)
   const [error, setError] = useState<string | undefined>(undefined)
 
-  const backfillActivities = async () => {
-    if (athlete === undefined || athlete === null || strava === undefined) return
+  useEffect(() => {
+    const backfillActivities = async () => {
+      if (athlete === undefined || athlete === null || strava === undefined) return
 
-    try {
-      for (let page = 1, done = false; !done; page++) {
-        const activities = await strava.activities(page)
+      try {
+        for (let page = 1, done = false; !done; page++) {
+          const activities = await strava.activities(page)
 
-        // Stop if there are no activities left.
-        if (activities.length === 0) {
-          done = true
-          athlete.completeBackfill()
-          return
-        }
-
-        setActivityCount(c => c + activities.length)
-
-        // Dispatch storing in DB asynchronously so we can fetch more activities in parallel.
-        fetch('/api/user/activities', {
-          method: 'POST',
-          body: JSON.stringify(activities),
-        }).then(res => {
-          if (!res.ok) {
-            setError('Something went wrong.')
+          // Stop if there are no activities left.
+          if (activities.length === 0) {
+            done = true
+            athlete.completeBackfill()
             return
           }
-        })
-      }
-    } catch (e: any) {
-      setError(e.message)
-    }
-  }
 
-  useEffect(() => {
+          setActivityCount(c => c + activities.length)
+
+          // Dispatch storing in DB asynchronously so we can fetch more activities in parallel.
+          // TODO: Handle errors here. We mark as backfill complete if we fetch them all from Strava,
+          // without caring whether they got inserted into the DB.
+          fetch('/api/user/activities', {
+            method: 'POST',
+            body: JSON.stringify(activities),
+          }).then(res => {
+            if (!res.ok) {
+              setError('Something went wrong.')
+              return
+            }
+          })
+        }
+      } catch (e: any) {
+        setError(e.message)
+      }
+    }
+
     if (strava === undefined) return
     if (athlete === undefined) return
     if (athlete === null) {
@@ -81,10 +82,10 @@ export default function Backfill() {
   }, [strava, athlete?.id, athlete?.backfill_status, router])
 
   useEffect(() => {
+    if (!dirty) return
     if (strava === undefined) return
     const athlete = strava.getAthlete()
     if (athlete === undefined) return
-    if (!dirty) return
 
     setDirty(false)
     fetch(`/api/user/processing?id=${athlete.id}`)
@@ -96,7 +97,7 @@ export default function Backfill() {
         }
         setTimeout(() => setDirty(true), 2000)
       })
-  }, [strava, dirty])
+  }, [strava, dirty, router])
 
   const content = (status: Status) => {
     switch (status) {

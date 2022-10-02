@@ -20,14 +20,20 @@ const routes = async (req: NextApiRequest, res: NextApiResponse) => {
 export default routes
 
 const statsQuery = `
+with stats as (
+  select
+    route_id,
+    covered_length
+  from route_stats
+  where athlete_id = $1
+)
 select
   routes.id,
   routes.display_name,
   ST_AsEncodedPolyline(routes.track::geometry) as polyline,
   ST_Length(routes.track) as length,
   routes.description,
-  route_stats.covered_length
+  coalesce(stats.covered_length, 0) as covered_length
 from routes
-join route_stats on route_stats.route_id = routes.id
-where route_stats.athlete_id = $1
+left outer join stats on stats.route_id = routes.id
 `

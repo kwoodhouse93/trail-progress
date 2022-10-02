@@ -91,12 +91,19 @@ export default function TrailPage() {
       </div>
     </div>
 
-    {trail.length !== undefined &&
+    {trail.length !== undefined && stats.length > 0 ?
       <>
         <p>
           You have covered <span className={styles.strong}>{metersReadable(stats.length)}</span>!
         </p>
         <CoverageBar totalLength={trail.length} coveredLength={stats.length} />
+      </>
+      :
+      <>
+        <p>
+          It looks you haven’t been to the {trail.display_name} yet.
+          Why not plan a trip?
+        </p>
       </>
     }
 

@@ -1,6 +1,7 @@
 import { Athlete } from 'lib/strava/types'
 import React from 'react'
 import styles from 'styles/Athlete.module.scss'
+import AthleteActivitiesSummary from './AthleteActivitiesSummary'
 import Button from './common/Button'
 
 type AthleteProps = {
@@ -30,6 +31,7 @@ const Athlete = ({ athlete, signOut }: AthleteProps) => {
         alt={`Profile image for ${athlete?.firstname} ${athlete?.lastname}`}
       />
       <p>{location}</p>
+      <AthleteActivitiesSummary athlete={athlete} />
       <p className={styles.link}>
         <a href={`https://www.strava.com/athletes/${athlete?.id}`}>View on Strava</a>
       </p>
