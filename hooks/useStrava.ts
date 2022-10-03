@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Activity, Athlete } from 'lib/strava/types'
 import { checkErrors } from 'lib/strava/api'
-import pool from 'lib/database'
 
 export const requiredScopes = ['read', 'activity:read']
 
@@ -48,7 +47,11 @@ const getAuth = () => {
   return authData
 }
 
+let exchanging = false
 export const exchangeCode = (code: string) => {
+  if (exchanging) return Promise.resolve()
+  exchanging = true
+
   return fetch(`/api/strava/auth/exchange`, {
     method: 'POST',
     headers: {
@@ -62,19 +65,17 @@ export const exchangeCode = (code: string) => {
     .then(data => data.json())
     .then(data => {
       localStorage.setItem('strava_auth', JSON.stringify(data))
-      return data
-    })
-    .then(data => {
-      fetch('/api/user/athlete', {
-        method: 'POST',
-        body: JSON.stringify({ id: data.athlete.id })
-      })
     })
     .catch(e => e)
+    .finally(() => exchanging = false)
 }
 
+let refreshing = false
 const refresh = (auth: StravaAuth) => {
-  return fetch(`/api/strava/auth/refresh`, {
+  if (refreshing) return
+  refreshing = true
+
+  return fetch(`/api/strava/auth/refresh?id=${auth.athlete.id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -89,6 +90,7 @@ const refresh = (auth: StravaAuth) => {
       localStorage.setItem('strava_auth', JSON.stringify({ ...auth, ...data }))
     })
     .catch(e => e)
+    .finally(() => refreshing = false)
 }
 
 const activities = async (page: number) => {

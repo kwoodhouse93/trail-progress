@@ -16,10 +16,7 @@ const AuthStrava = () => {
   const [error, setError] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    if (redirPath === undefined || authCode === undefined || scopes === undefined) {
-      setError("Something went wrong.")
-      return
-    }
+    if (redirPath === undefined || authCode === undefined || scopes === undefined || router === undefined) return
 
     // Check scopes
     if (!scopes?.includes('read') || !scopes?.includes('activity:read')) {
@@ -30,15 +27,12 @@ const AuthStrava = () => {
     // Exchange code
     exchangeCode(authCode)
       .then(e => {
-        if (e !== undefined) {
-          setError('Something went wrong!')
-        } else {
-          // Redirect on success
+        if (e === undefined) {
           router.push(redirPath)
+        } else {
+          setError('Something went wrong.')
         }
       })
-
-    // router.push(redirPath)
   }, [router, redirPath, authCode, scopes])
 
   return (

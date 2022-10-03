@@ -1,9 +1,11 @@
 TODO:
 
 NOW
+- Store auth/refresh tokens
 - Implement Strava webhooks for receiving new events
 
 MEDIUM (needed before launch)
+- Check we're using sport_type and not the deprecated field 'type'
 - /api/user/routes returns [] if processing isn't complete
 - If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Implement removal of user data (on Strava webhook, plus a 'Delete account' button in /account?)

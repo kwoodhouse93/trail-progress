@@ -14,7 +14,7 @@ const AthleteActivitiesSummary = ({ athlete }: AthleteActivitiesSummaryProps) =>
     fetch(`/api/user/activities?id=${athlete.id}`)
       .then(res => res.json())
       .then(data => setActivities(data))
-  }, [activities, athlete])
+  }, [athlete])
 
   let content = <p>Loading your activities...</p>
   if (activities.length > 0) {
