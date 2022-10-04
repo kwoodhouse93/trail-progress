@@ -1,14 +1,11 @@
 TODO:
 
 NOW
-- Store auth/refresh tokens
-- Implement Strava webhooks for receiving new events
+- Implement removal of user data (a 'Delete account' button in /account?)
 
 MEDIUM (needed before launch)
 - Check we're using sport_type and not the deprecated field 'type'
-- /api/user/routes returns [] if processing isn't complete
 - If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
-- Implement removal of user data (on Strava webhook, plus a 'Delete account' button in /account?)
 - Add more trails
 - Show background processing completion on /trails/[id]
 - Setting map zoom level seems to work locally but not when deployed... Weird
@@ -26,6 +23,7 @@ LOW (nice to have)
 - Add user settings for units and activity types to include
 - Break down processing so more activity/route pairs can be marked as processed sooner
 - Sort trails by completion percentage
+- Returning to /backfill after leaving it during backfill/processing, it sometimes says "0 activities loaded" incorrectly
 
 VERY LOW (maybe do at some point)
 - Look into pulling streams and processing these in addition to polylines - is it really necessary? What's the max. privacy area on Strava?

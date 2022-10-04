@@ -1,15 +1,16 @@
 import { Athlete } from 'lib/strava/types'
 import React from 'react'
 import styles from 'styles/Athlete.module.scss'
-import AthleteActivitiesSummary from './AthleteActivitiesSummary'
-import Button from './common/Button'
+import AthleteActivitiesSummary from 'components/AthleteActivitiesSummary'
+import Button from 'components/common/Button'
 
 type AthleteProps = {
   athlete?: Athlete
   signOut?: () => void
+  deleteAthlete?: React.MouseEventHandler<HTMLAnchorElement>
 }
 
-const Athlete = ({ athlete, signOut }: AthleteProps) => {
+const Athlete = ({ athlete, signOut, deleteAthlete }: AthleteProps) => {
 
   if (athlete === undefined) return null
 
@@ -38,6 +39,9 @@ const Athlete = ({ athlete, signOut }: AthleteProps) => {
       {signOut && <Button className={styles.button} strava onClick={signOut}>
         Sign out
       </Button>}
+      {deleteAthlete && <a className={styles.deleteLink} onClick={deleteAthlete} href="#">
+        Delete account
+      </a>}
     </div>
   )
 }

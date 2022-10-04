@@ -93,6 +93,18 @@ const refresh = (auth: StravaAuth) => {
     .finally(() => refreshing = false)
 }
 
+const deleteAthlete = async () => {
+  const auth = getAuth()
+  if (auth === undefined) {
+    return undefined
+  }
+
+  return fetch(`/api/strava/oauth/deauthorize?id=${auth.athlete.id}`, { headers: { 'Authorization': `Bearer ${auth.access_token}` } })
+    .then(checkErrors)
+    .then(data => data.json())
+    .then(() => localStorage.removeItem('strava_auth'))
+}
+
 const activities = async (page: number) => {
   const auth = getAuth()
   if (auth === undefined) {
@@ -113,6 +125,7 @@ const signOut = () => {
 interface StravaAPI {
   isAuthed: () => Promise<boolean>
   getAthlete: () => Athlete | undefined
+  deleteAthlete: () => Promise<void>
   activities: (page: number) => Promise<Activity[]>
   signOut: () => void
 }
@@ -120,6 +133,7 @@ interface StravaAPI {
 const strava: StravaAPI = {
   isAuthed: isAuthed,
   getAthlete: () => getAuth()?.athlete,
+  deleteAthlete: deleteAthlete,
   activities: activities,
   signOut: signOut,
 }

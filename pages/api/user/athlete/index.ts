@@ -45,7 +45,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  const rows = await pool.query(insertQuery, [reqBody.id])
+  await pool.query(insertQuery, [reqBody.id])
   res.status(200).json({})
   return
 }
@@ -60,5 +60,6 @@ WHERE
 
 const insertQuery = `INSERT INTO athletes (id) VALUES ($1)
 ON CONFLICT DO NOTHING`
+
 
 export default athlete
