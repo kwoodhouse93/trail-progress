@@ -1,10 +1,11 @@
 TODO:
 
 NOW
+- Check we're using sport_type and not the deprecated field 'type'
 
 MEDIUM (needed before launch)
+- Test token refresh
 - Break down processing so more activity/route pairs can be marked as processed sooner
-- Check we're using sport_type and not the deprecated field 'type'
 - If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Add more trails
 - Show background processing completion on /trails/[id]

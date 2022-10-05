@@ -94,19 +94,8 @@ with
       activities.activity_type,
       activities.start_date,
       activities.local_tz,
-      activities.location_city,
-      activities.location_state,
-      activities.location_country,
       ST_AsEncodedPolyline(activities.summary_track::geometry) as polyline,
       activities.summary_track as activity_track,
-      activities.visibility,
-      activities.average_speed,
-      activities.max_speed,
-      activities.average_temp,
-      activities.average_watts,
-      activities.kilojoules,
-      activities.average_heartrate,
-      activities.max_heartrate,
       activities.elev_high,
       activities.elev_low,
       activities.external_id,
@@ -129,17 +118,6 @@ with
       activity_type,
       start_date,
       local_tz,
-      location_city,
-      location_state,
-      location_country,
-      visibility,
-      average_speed,
-      max_speed,
-      average_temp,
-      average_watts,
-      kilojoules,
-      average_heartrate,
-      max_heartrate,
       elev_high,
       elev_low,
       external_id,
@@ -167,17 +145,6 @@ with
       activity_type,
       start_date,
       local_tz,
-      location_city,
-      location_state,
-      location_country,
-      visibility,
-      average_speed,
-      max_speed,
-      average_temp,
-      average_watts,
-      kilojoules,
-      average_heartrate,
-      max_heartrate,
       elev_high,
       elev_low,
       external_id,
@@ -196,17 +163,6 @@ type QueryActivity = {
   activity_type: string,
   start_date: Date,
   local_tz: string,
-  location_city?: string,
-  location_state?: string,
-  location_country?: string,
-  visibility: string,
-  average_speed: number,
-  max_speed: number,
-  average_temp?: number,
-  average_watts?: number,
-  kilojoules?: number,
-  average_heartrate?: number,
-  max_heartrate?: number,
   elev_high?: number,
   elev_low?: number,
   external_id?: string,
@@ -227,20 +183,9 @@ const toValue: (value: QueryActivity) => Activity = value => {
     moving_time: value.moving_time,
     elapsed_time: value.elapsed_time,
     total_elevation_gain: value.total_elevation_gain,
-    type: value.activity_type,
+    sport_type: value.activity_type,
     start_date: value.start_date,
     timezone: value.local_tz,
-    location_city: value.location_city,
-    location_state: value.location_state,
-    location_country: value.location_country,
-    visibility: value.visibility,
-    average_speed: value.average_speed,
-    max_speed: value.max_speed,
-    average_temp: value.average_temp,
-    average_watts: value.average_watts,
-    kilojoules: value.kilojoules,
-    average_heartrate: value.average_heartrate,
-    max_heartrate: value.max_heartrate,
     elev_high: value.elev_high,
     elev_low: value.elev_low,
     external_id: value.external_id,
@@ -249,25 +194,3 @@ const toValue: (value: QueryActivity) => Activity = value => {
     }
   }
 }
-
-// array_agg(
-  // st_astext((st_dumppoints(
-  //   st_boundary(
-  //     intersection_track
-  //   )
-  // )).geom)
-// ) as start_end_points,
-// mapped as (
-//   select
-//     intersections.id,
-//     intersections.name,
-//     intersections.polyline,
-//     ST_AsText((ST_DumpPoints(
-//       ST_Boundary(
-//         intersections.intersection_track
-//       )
-//     )).geom) as start_end_points,
-//     intersections.intersection_track
-//   FROM intersections
-//   GROUP BY intersections.id, intersections.name, intersections.polyline, start_end_points, intersections.intersection_track
-// ),

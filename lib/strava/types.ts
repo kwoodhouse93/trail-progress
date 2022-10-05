@@ -36,8 +36,8 @@ export interface Activity {
   moving_time: number
   elapsed_time: number
   total_elevation_gain: number
-  type: string
-  sport_type?: string
+  type?: string
+  sport_type: string
   id: number
   start_date: Date | string
   start_date_local?: Date | string
@@ -56,13 +56,13 @@ export interface Activity {
   commute?: boolean
   manual?: boolean
   private?: boolean
-  visibility: string
+  visibility?: string
   flagged?: boolean
   gear_id?: string
   start_latlng?: number[]
   end_latlng?: number[]
-  average_speed: number
-  max_speed: number
+  average_speed?: number
+  max_speed?: number
   average_cadence?: number
   average_temp?: number
   has_heartrate?: boolean

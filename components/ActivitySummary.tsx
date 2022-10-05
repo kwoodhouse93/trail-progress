@@ -15,7 +15,7 @@ const ActivitySummary = ({ activity, coveredLength }: ActivitySummaryProps) => {
   return <div className={styles.wrapper}>
     <h3 className={styles.title}>
       {activity.name}
-      <span className={styles.icon}>{activityTypeToIcon(activity.type)}</span>
+      <span className={styles.icon}>{activityTypeToIcon(activity.sport_type)}</span>
     </h3>
     <p>{metersReadable(activity.distance)}, {timeReadable(activity.moving_time)}</p>
     {coveredLength !== undefined && <p>Covered {metersReadable(coveredLength)} of this trail</p>}
