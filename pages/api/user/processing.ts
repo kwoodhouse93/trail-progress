@@ -1,9 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import pool from 'lib/database'
+import { authenticateQueryId } from 'lib/auth'
 
 const processing = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
     res.status(405).json({ error: 'Method Not Allowed' })
+    return
+  }
+
+  const valid = await authenticateQueryId(req)
+  if (valid !== true) {
+    res.status(401).json({ error: 'unauthorized' })
     return
   }
 

@@ -46,6 +46,7 @@ export default function Backfill() {
           fetch('/api/user/activities', {
             method: 'POST',
             body: JSON.stringify(activities),
+            headers: { 'Authorization': `Bearer ${strava.getToken()}` }
           }).then(res => {
             if (!res.ok) {
               setError('Something went wrong.')
@@ -88,7 +89,9 @@ export default function Backfill() {
     if (athlete === undefined) return
 
     setDirty(false)
-    fetch(`/api/user/processing?id=${athlete.id}`)
+    fetch(`/api/user/processing?id=${athlete.id}`, {
+      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
+    })
       .then(res => res.json())
       .then(data => {
         if (data.length === 0) {

@@ -17,7 +17,7 @@ type AthleteAPI = {
 
 type SetAthleteFn = React.Dispatch<React.SetStateAction<Athlete | null | undefined>>
 
-const startBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn) => {
+const startBackfill = async (athlete: Athlete, token: string, setAthlete: SetAthleteFn) => {
   if (athlete.backfill_status === 'started') {
     return
   }
@@ -32,12 +32,15 @@ const startBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn) => {
       id: athlete.id,
       status: 'started',
     }),
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
   })
   const data = await res.json()
   setAthlete(data)
 }
 
-const completeBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn) => {
+const completeBackfill = async (athlete: Athlete, token: string, setAthlete: SetAthleteFn) => {
   if (athlete.backfill_status === 'complete') {
     return
   }
@@ -52,6 +55,9 @@ const completeBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn) => {
       id: athlete.id,
       status: 'complete',
     }),
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
   })
   const data = await res.json()
   setAthlete(data)
@@ -71,7 +77,9 @@ const useAthlete: () => AthleteAPI | null | undefined = () => {
 
     const fetchAthlete = async () => {
       try {
-        const res = await fetch(`/api/user/athlete?id=${stravaAthlete.id}`)
+        const res = await fetch(`/api/user/athlete?id=${stravaAthlete.id}`, {
+          headers: { 'Authorization': `Bearer ${strava.getToken()}` },
+        })
         if (!res.ok) {
           localStorage.removeItem('strava_auth')
           setAthlete(null)
@@ -89,13 +97,16 @@ const useAthlete: () => AthleteAPI | null | undefined = () => {
     fetchAthlete()
   }, [strava])
 
+  if (strava === undefined) return undefined
   if (athlete === null) return null
   if (athlete === undefined) return undefined
+  const token = strava.getToken()
+  if (token === undefined) return undefined
 
   return {
     ...athlete,
-    startBackfill: () => startBackfill(athlete, setAthlete),
-    completeBackfill: () => completeBackfill(athlete, setAthlete),
+    startBackfill: () => startBackfill(athlete, token, setAthlete),
+    completeBackfill: () => completeBackfill(athlete, token, setAthlete),
   }
 }
 

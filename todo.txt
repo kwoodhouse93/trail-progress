@@ -1,19 +1,19 @@
 TODO:
 
 NOW
-- Implement removal of user data (a 'Delete account' button in /account?)
 
 MEDIUM (needed before launch)
+- Break down processing so more activity/route pairs can be marked as processed sooner
 - Check we're using sport_type and not the deprecated field 'type'
 - If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Add more trails
 - Show background processing completion on /trails/[id]
 - Setting map zoom level seems to work locally but not when deployed... Weird
-- API Authentication / RLS
-- Fix the 'something went wrong' that flashes up during login
 - Add favicon and Strava app icon
 
 LOW (nice to have)
+- Potentially use a context for strava/auth?
+- Sort trails by completion percentage
 - Explain when user has not started a trail
 - Explain when user has completed a trail
 - Check and respect rate limits to avoid overuse
@@ -21,8 +21,6 @@ LOW (nice to have)
 - Check user is redirected to / if not authed on all pages (e.g. /pending)
 - Review screens that flash content - consider global loading state?
 - Add user settings for units and activity types to include
-- Break down processing so more activity/route pairs can be marked as processed sooner
-- Sort trails by completion percentage
 - Returning to /backfill after leaving it during backfill/processing, it sometimes says "0 activities loaded" incorrectly
 
 VERY LOW (maybe do at some point)

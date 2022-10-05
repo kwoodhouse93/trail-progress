@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import pool from 'lib/database'
+import { authenticateBodyId } from 'lib/auth'
 import { Athlete, Status } from '.'
 
 type AthleteStateRequest = {
@@ -14,6 +15,12 @@ const athlete = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const reqBody = JSON.parse(req.body) as AthleteStateRequest
+
+  const valid = await authenticateBodyId(req, reqBody)
+  if (valid !== true) {
+    res.status(401).json({ error: 'unauthorized' })
+    return
+  }
 
   // Query validation
   if (reqBody.id === undefined) {

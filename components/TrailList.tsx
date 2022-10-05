@@ -16,14 +16,17 @@ const TrailList = () => {
   useEffect(() => {
     if (!fetchRoutes) return
 
-    const stravaAthlete = strava?.getAthlete()
+    if (strava === undefined) return
+    const stravaAthlete = strava.getAthlete()
     if (stravaAthlete === undefined) return
 
     setFetchRoutes(false)
-    fetch(`/api/user/routes?id=${stravaAthlete.id}`)
+    fetch(`/api/user/routes?id=${stravaAthlete.id}`, {
+      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
+    })
       .then(res => res.json())
       .then(data => {
-        setTrails(data)
+        Array.isArray(data) && setTrails(data)
       })
   }, [strava, fetchRoutes])
 
@@ -34,9 +37,12 @@ const TrailList = () => {
     if (athlete === undefined) return
 
     setPollProcessing(false)
-    fetch(`/api/user/processing?id=${athlete.id}`)
+    fetch(`/api/user/processing?id=${athlete.id}`, {
+      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
+    })
       .then(res => res.json())
       .then(data => {
+        if (!Array.isArray(data)) return
         setUnprocessed(data.map((s: { route_id: string, unprocessed_count: number }) => s.route_id))
         if (data.length > 0) {
           // If there are still unprocessed routes, poll again in a bit

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Activity, Athlete } from 'lib/strava/types'
 import { checkErrors } from 'lib/strava/api'
@@ -36,6 +36,14 @@ const isAuthed = async () => {
   }
 
   return true
+}
+
+const getToken = () => {
+  const auth = getAuth()
+  if (auth === undefined) {
+    return undefined
+  }
+  return auth.access_token
 }
 
 const getAuth = () => {
@@ -124,6 +132,7 @@ const signOut = () => {
 
 interface StravaAPI {
   isAuthed: () => Promise<boolean>
+  getToken: () => string | undefined
   getAthlete: () => Athlete | undefined
   deleteAthlete: () => Promise<void>
   activities: (page: number) => Promise<Activity[]>
@@ -132,6 +141,7 @@ interface StravaAPI {
 
 const strava: StravaAPI = {
   isAuthed: isAuthed,
+  getToken: getToken,
   getAthlete: () => getAuth()?.athlete,
   deleteAthlete: deleteAthlete,
   activities: activities,

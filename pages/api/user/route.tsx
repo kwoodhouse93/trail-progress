@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import pool from 'lib/database'
-import { useInsertionEffect } from 'react'
 import { Activity } from 'lib/strava/types'
+import { authenticate } from 'lib/auth'
 
 const route = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
@@ -9,7 +9,17 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  // TODO: Consolidate route name and route ID
+  if (req.query.athlete_id === undefined) {
+    res.status(400).json({ error: 'athlete_id is required' })
+    return
+  }
+  const id = parseInt(Array.isArray(req.query.athlete_id) ? req.query.athlete_id[0] : req.query.athlete_id)
+  const valid = await authenticate(req, id)
+  if (valid !== true) {
+    res.status(401).json({ error: 'unauthorized' })
+    return
+  }
+
   const relevantActivitiesRows = await pool.query(relevantActivitiesQuery, [req.query.route_id, req.query.athlete_id])
   const unionRows = await pool.query(unionQuery, [req.query.route_id, req.query.athlete_id])
   const statsRows = await pool.query(statsQuery, [req.query.route_id, req.query.athlete_id])

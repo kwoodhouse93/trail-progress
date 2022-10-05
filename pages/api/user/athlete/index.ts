@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import pool from 'lib/database'
+import { authenticateBodyId, authenticateQueryId } from 'lib/auth'
 
 export type Status = 'not_started' | 'started' | 'complete'
 export type Athlete = {
@@ -23,6 +24,12 @@ const athlete = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
+  const valid = await authenticateQueryId(req)
+  if (valid !== true) {
+    res.status(401).json({ error: 'unauthorized' })
+    return
+  }
+
   if (req.query.id === undefined) {
     res.status(400).json({ error: 'id is required' })
     return
@@ -40,6 +47,13 @@ const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   const reqBody = JSON.parse(req.body)
+
+  const valid = await authenticateBodyId(req, reqBody)
+  if (valid !== true) {
+    res.status(401).json({ error: 'unauthorized' })
+    return
+  }
+
   if (reqBody.id === undefined) {
     res.status(400).json({ error: 'id is required' })
     return

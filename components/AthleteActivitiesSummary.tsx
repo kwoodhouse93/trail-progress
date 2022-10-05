@@ -3,18 +3,23 @@ import { useEffect, useState } from 'react'
 import { Activity, Athlete } from 'lib/strava/types'
 
 import styles from 'styles/AthleteActivitiesSummary.module.scss'
+import useStrava from 'hooks/useStrava'
 
 type AthleteActivitiesSummaryProps = {
   athlete: Athlete
 }
 
 const AthleteActivitiesSummary = ({ athlete }: AthleteActivitiesSummaryProps) => {
+  const { strava } = useStrava()
   const [activities, setActivities] = useState<Activity[]>([])
   useEffect(() => {
-    fetch(`/api/user/activities?id=${athlete.id}`)
+    if (strava === undefined) return
+    fetch(`/api/user/activities?id=${athlete.id}`, {
+      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
+    })
       .then(res => res.json())
       .then(data => setActivities(data))
-  }, [athlete])
+  }, [athlete, strava])
 
   let content = <p>Loading your activities...</p>
   if (activities.length > 0) {

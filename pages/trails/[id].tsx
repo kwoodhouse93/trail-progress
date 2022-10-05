@@ -65,12 +65,15 @@ export default function TrailPage() {
     const stravaAthlete = strava.getAthlete()
     if (stravaAthlete === undefined) return
 
-    fetch(`/api/user/route?route_id=${id}&athlete_id=${stravaAthlete.id}`)
+    fetch(`/api/user/route?route_id=${id}&athlete_id=${stravaAthlete.id}`, {
+      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
+    })
       .then(res => res.json())
       .then(data => {
-        setCoverage(data.union.map((u: { polyline: string }) => u.polyline))
+        if (data === undefined) return
+        Array.isArray(data.union) && setCoverage(data.union.map((u: { polyline: string }) => u.polyline))
         setStats(data.stats)
-        setActivities(data.relevantActivities)
+        Array.isArray(data.relevantActivities) && setActivities(data.relevantActivities)
       })
   }, [id, strava])
 

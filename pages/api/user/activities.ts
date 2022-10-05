@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import pool from 'lib/database'
 import { Activity } from 'lib/strava/types'
+import { authenticate, authenticateQueryId } from 'lib/auth'
 
 const activities = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
@@ -20,6 +21,12 @@ const activities = async (req: NextApiRequest, res: NextApiResponse) => {
 export default activities
 
 const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
+  const valid = await authenticateQueryId(req)
+  if (valid !== true) {
+    res.status(401).json({ error: 'unauthorized' })
+    return
+  }
+
   const rows = await pool.query(selectQuery, [req.query.id])
   res.status(200).json(rows.rows.map(r => toActivity(r)))
 }
@@ -28,6 +35,21 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   const data: Activity[] = JSON.parse(req.body)
   if (!Array.isArray(data)) {
     res.status(400).json({ error: 'Invalid data' })
+    return
+  }
+
+  // Extract athlete ID from activities to make sure they're all owned by
+  // the same person.
+  const singleAthlete = data.every(activity => activity.athlete.id === data[0].athlete.id)
+  if (!singleAthlete) {
+    res.status(400).json({ error: 'Invalid data' })
+    return
+  }
+
+  // Actually verify the caller's access token matches the athlete ID.
+  const valid = await authenticate(req, data[0].athlete.id)
+  if (valid !== true) {
+    res.status(401).json({ error: 'unauthorized' })
     return
   }
 
