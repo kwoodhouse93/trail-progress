@@ -41,13 +41,12 @@ const AuthStrava = () => {
         Connecting your account...
       </p>
 
-      <div >
-        {error !== undefined && <>
+      {error !== undefined &&
+        <div >
           <p>{error} Please try again.</p>
           <StravaLogin />
-        </>
-        }
-      </div>
+        </div>
+      }
     </div>
   )
 }

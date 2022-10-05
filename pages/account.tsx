@@ -1,15 +1,20 @@
 import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
 
+import useAthlete from 'hooks/useAthlete'
+import useStrava from 'hooks/useStrava'
 import Layout from 'components/layouts/Layout'
 import Athlete from 'components/Athlete'
-import useStrava from 'hooks/useStrava'
-import Button from 'components/common/Button'
-import { browser } from 'process'
 
 export default function Home() {
   const { strava } = useStrava()
   const router = useRouter()
+  const athlete = useAthlete()
+
+  if (athlete === null) {
+    router.push('/')
+    return null
+  }
 
   const signOut = () => {
     if (strava === undefined) return

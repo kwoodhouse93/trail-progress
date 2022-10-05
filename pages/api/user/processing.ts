@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import pool from 'lib/database'
+
 import { authenticateQueryId } from 'lib/auth'
+import pool from 'lib/database'
 
 const processing = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {

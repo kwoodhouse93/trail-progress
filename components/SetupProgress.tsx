@@ -1,4 +1,5 @@
 import { cn } from 'lib/styles'
+
 import styles from 'styles/SetupProgress.module.scss'
 
 type SetupStates = 'connecting' | 'backfill' | 'processing'

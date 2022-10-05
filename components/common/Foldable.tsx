@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import Button from './Button'
+
+import Button from 'components/common/Button'
+
 import styles from 'styles/Foldable.module.scss'
 
 type FoldableProps = {

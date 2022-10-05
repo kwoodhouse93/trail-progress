@@ -1,12 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
 
+import { useSummaryMap } from 'hooks/useSummaryMap'
+import { metersReadable } from 'lib/strava/types'
 import { cn } from 'lib/styles'
 import { Route } from 'lib/types'
-import { useSummaryMap } from 'hooks/useSummaryMap'
 
 import styles from 'styles/TrailSummary.module.scss'
-import { metersReadable } from 'lib/strava/types'
 
 type TrailSummaryProps = {
   trail: Route

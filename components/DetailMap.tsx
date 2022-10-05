@@ -1,8 +1,8 @@
+import { useCallback, useRef } from 'react'
 import { MapContainer, Polyline, TileLayer } from 'react-leaflet'
 import * as gPolyline from 'google-polyline'
-import 'leaflet/dist/leaflet.css'
-import { useCallback, useRef } from 'react'
 import { Map, Polyline as PolylineType } from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 type DetailMapProps = {
   polyline: string

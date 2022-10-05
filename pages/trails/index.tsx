@@ -2,9 +2,9 @@ import { ReactElement, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import useAthlete from 'hooks/useAthlete'
+import { cn } from 'lib/styles'
 import AthleteLayout from 'components/layouts/AthleteLayout'
 import TrailList from 'components/TrailList'
-import { cn } from 'lib/styles'
 
 import styles from 'styles/Trails.module.scss'
 

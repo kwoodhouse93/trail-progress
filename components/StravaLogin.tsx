@@ -1,5 +1,6 @@
+import ButtonLink from 'components/common/ButtonLink'
 import PermissionsNotice from 'components/PermissionsNotice'
-import ButtonLink from './common/ButtonLink'
+
 import styles from 'styles/StravaLogin.module.scss'
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID

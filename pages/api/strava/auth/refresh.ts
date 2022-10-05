@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 import { checkErrors, StravaError } from 'lib/strava/api'
 import pool from 'lib/database'
 

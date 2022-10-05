@@ -1,8 +1,10 @@
-import { Athlete } from 'lib/strava/types'
 import React from 'react'
-import styles from 'styles/Athlete.module.scss'
-import AthleteActivitiesSummary from 'components/AthleteActivitiesSummary'
+
+import { Athlete } from 'lib/strava/types'
 import Button from 'components/common/Button'
+import AthleteActivitiesSummary from 'components/AthleteActivitiesSummary'
+
+import styles from 'styles/Athlete.module.scss'
 
 type AthleteProps = {
   athlete?: Athlete

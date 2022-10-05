@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 import pool from 'lib/database'
 import { Route } from 'lib/types'
 

@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import pool from 'lib/database'
+
 import { authenticateBodyId } from 'lib/auth'
-import { Athlete, Status } from '.'
+import pool from 'lib/database'
+import { Athlete, Status } from 'pages/api/user/athlete'
 
 type AthleteStateRequest = {
   id: number

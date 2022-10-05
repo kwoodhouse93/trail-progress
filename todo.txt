@@ -1,11 +1,10 @@
 TODO:
 
 NOW
-- Check we're using sport_type and not the deprecated field 'type'
+- Break down processing so more activity/route pairs can be marked as processed sooner
 
 MEDIUM (needed before launch)
 - Test token refresh
-- Break down processing so more activity/route pairs can be marked as processed sooner
 - If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Add more trails
 - Show background processing completion on /trails/[id]
@@ -19,7 +18,6 @@ LOW (nice to have)
 - Explain when user has completed a trail
 - Check and respect rate limits to avoid overuse
 - Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
-- Check user is redirected to / if not authed on all pages (e.g. /pending)
 - Review screens that flash content - consider global loading state?
 - Add user settings for units and activity types to include
 - Returning to /backfill after leaving it during backfill/processing, it sometimes says "0 activities loaded" incorrectly
@@ -31,3 +29,4 @@ VERY LOW (maybe do at some point)
 - Dark mode
 - Pretty up the headline route stats on /trails
 - Add activity browser/search in /account
+- Consider checking athlete backfill/processing status on exchange to figure out where to redirect them to (could avoid /backfill flashing up if we check it before redirecting)

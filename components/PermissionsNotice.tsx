@@ -1,4 +1,5 @@
 import Foldable from 'components/common/Foldable'
+
 import styles from 'styles/PermissionsNotice.module.scss'
 
 const PermissionsNotice = () => {

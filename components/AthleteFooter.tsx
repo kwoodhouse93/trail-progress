@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import { Athlete } from 'lib/strava/types'
+
 import styles from 'styles/AthleteFooter.module.scss'
 
 type AthleteFooterProps = {

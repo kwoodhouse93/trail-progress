@@ -1,4 +1,5 @@
 import type { NextApiRequest } from 'next'
+
 import pool from 'lib/database'
 
 const token = (req: NextApiRequest) => {

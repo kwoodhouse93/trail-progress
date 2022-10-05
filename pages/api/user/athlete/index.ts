@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import pool from 'lib/database'
+
 import { authenticateBodyId, authenticateQueryId } from 'lib/auth'
+import pool from 'lib/database'
 
 export type Status = 'not_started' | 'started' | 'complete'
 export type Athlete = {

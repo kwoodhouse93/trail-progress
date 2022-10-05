@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { Activity, Athlete } from 'lib/strava/types'
 import { checkErrors } from 'lib/strava/api'
+import { Activity, Athlete } from 'lib/strava/types'
 
 export const requiredScopes = ['read', 'activity:read']
 

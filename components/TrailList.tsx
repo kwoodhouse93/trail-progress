@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { Route } from 'lib/types'
 import useStrava from 'hooks/useStrava'
+import { Route } from 'lib/types'
 import TrailSummary from 'components/TrailSummary'
 
 import styles from 'styles/TrailList.module.scss'

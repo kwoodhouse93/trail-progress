@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+
 import useStrava from 'hooks/useStrava'
 
 type Status = 'not_started' | 'started' | 'complete'

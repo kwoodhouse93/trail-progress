@@ -1,16 +1,16 @@
 import { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Route } from 'lib/types'
-import { Activity, metersReadable } from 'lib/strava/types'
+import useAthlete from 'hooks/useAthlete'
 import { useDetailMap } from 'hooks/useDetailMap'
 import useStrava from 'hooks/useStrava'
+import { Activity, metersReadable } from 'lib/strava/types'
+import { Route } from 'lib/types'
 import AthleteLayout from 'components/layouts/AthleteLayout'
+import ActivitySummary from 'components/ActivitySummary'
 import CoverageBar from 'components/CoverageBar'
 
 import styles from 'styles/TrailPage.module.scss'
-import ActivitySummary from 'components/ActivitySummary'
-import useAthlete from 'hooks/useAthlete'
 
 type Stats = {
   length: number

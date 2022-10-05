@@ -2,14 +2,14 @@ import { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import AthleteLayout from 'components/layouts/AthleteLayout'
-import SetupProgress from 'components/SetupProgress'
+import useAthlete from 'hooks/useAthlete'
 import useStrava from 'hooks/useStrava'
+import AthleteLayout from 'components/layouts/AthleteLayout'
+import AfterDelay from 'components/AfterDelay'
+import SetupProgress from 'components/SetupProgress'
+import Spinner from 'components/Spinner'
 
 import styles from 'styles/Backfill.module.scss'
-import Spinner from 'components/Spinner'
-import useAthlete from 'hooks/useAthlete'
-import AfterDelay from 'components/AfterDelay'
 
 type Status = 'default' | 'backfill' | 'process' | 'done'
 

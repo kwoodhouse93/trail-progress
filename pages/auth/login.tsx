@@ -1,11 +1,11 @@
 import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
 
+import useStrava from 'hooks/useStrava'
+import { cn } from 'lib/styles'
 import SplashLayout from 'components/layouts/SplashLayout'
 import SetupProgress from 'components/SetupProgress'
 import StravaLogin from 'components/StravaLogin'
-import useStrava from 'hooks/useStrava'
-import { cn } from 'lib/styles'
 
 import styles from 'styles/Login.module.scss'
 

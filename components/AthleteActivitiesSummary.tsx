@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 
+import useStrava from 'hooks/useStrava'
 import { Activity, Athlete } from 'lib/strava/types'
 
 import styles from 'styles/AthleteActivitiesSummary.module.scss'
-import useStrava from 'hooks/useStrava'
 
 type AthleteActivitiesSummaryProps = {
   athlete: Athlete

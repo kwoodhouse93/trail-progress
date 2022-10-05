@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
+import { authenticateQueryId } from 'lib/auth'
 import pool from 'lib/database'
 import { Route } from 'lib/types'
-import { authenticateQueryId } from 'lib/auth'
 
 const routes = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {

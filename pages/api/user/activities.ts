@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import pool from 'lib/database'
+
 import { Activity } from 'lib/strava/types'
 import { authenticate, authenticateQueryId } from 'lib/auth'
+import pool from 'lib/database'
 
 const activities = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {

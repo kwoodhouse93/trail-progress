@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+
 import { checkErrors, logRateLimits, StravaError } from 'lib/strava/api'
 
 const deauthorize = async (req: NextApiRequest, res: NextApiResponse) => {

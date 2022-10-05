@@ -1,18 +1,18 @@
 import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
 
+import useAthlete from 'hooks/useAthlete'
 import Footer from 'components/Footer'
 import SplashLayout from 'components/layouts/SplashLayout'
 import StravaCTA from 'components/StravaCTA'
-import useStrava from 'hooks/useStrava'
 
 import styles from 'styles/Splash.module.scss'
 
 export default function Home() {
-  const { authed } = useStrava()
+  const athlete = useAthlete()
   const router = useRouter()
 
-  if (authed) {
+  if (athlete !== undefined && athlete !== null) {
     router.push('/trails')
     return null
   }

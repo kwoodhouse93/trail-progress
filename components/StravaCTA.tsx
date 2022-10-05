@@ -1,5 +1,6 @@
+import ButtonLink from 'components/common/ButtonLink'
+
 import styles from 'styles/StravaCTA.module.scss'
-import ButtonLink from './common/ButtonLink'
 
 type StravaCTAProps = {
   caption: string
