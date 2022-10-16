@@ -122,6 +122,9 @@ const refresh = (auth: StravaAuth) => {
       localStorage.setItem('strava_auth', JSON.stringify(newAuth))
       return newAuth
     })
+    .catch(() => {
+      localStorage.removeItem('strava_auth')
+    })
 }
 
 const getToken = async (
