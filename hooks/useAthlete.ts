@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
+import { useAuthContext } from 'context/auth'
 import useStrava from 'hooks/useStrava'
 
 type Status = 'not_started' | 'started' | 'complete'
@@ -18,7 +19,9 @@ type AthleteAPI = {
 
 type SetAthleteFn = React.Dispatch<React.SetStateAction<Athlete | null | undefined>>
 
-const startBackfill = async (athlete: Athlete, token: string, setAthlete: SetAthleteFn) => {
+const startBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn, token?: string) => {
+  if (token === undefined) throw new Error('invalid token')
+
   if (athlete.backfill_status === 'started') {
     return
   }
@@ -41,7 +44,9 @@ const startBackfill = async (athlete: Athlete, token: string, setAthlete: SetAth
   setAthlete(data)
 }
 
-const completeBackfill = async (athlete: Athlete, token: string, setAthlete: SetAthleteFn) => {
+const completeBackfill = async (athlete: Athlete, setAthlete: SetAthleteFn, token?: string) => {
+  if (token === undefined) throw new Error('invalid token')
+
   if (athlete.backfill_status === 'complete') {
     return
   }
@@ -65,6 +70,7 @@ const completeBackfill = async (athlete: Athlete, token: string, setAthlete: Set
 }
 
 const useAthlete: () => AthleteAPI | null | undefined = () => {
+  const authContext = useAuthContext()
   const { strava } = useStrava()
   const [athlete, setAthlete] = useState<Athlete | null | undefined>(undefined)
 
@@ -77,12 +83,15 @@ const useAthlete: () => AthleteAPI | null | undefined = () => {
     }
 
     const fetchAthlete = async () => {
+      const token = await authContext?.token()
+      if (token === undefined) return
       try {
         const res = await fetch(`/api/user/athlete?id=${stravaAthlete.id}`, {
-          headers: { 'Authorization': `Bearer ${strava.getToken()}` },
+          headers: { 'Authorization': `Bearer ${token}` },
         })
         if (!res.ok) {
-          localStorage.removeItem('strava_auth')
+          // TODO: Revisit logging user out if athlete is not found
+          // localStorage.removeItem('strava_auth')
           setAthlete(null)
           return
         }
@@ -96,18 +105,18 @@ const useAthlete: () => AthleteAPI | null | undefined = () => {
       }
     }
     fetchAthlete()
-  }, [strava])
+  }, [authContext])
 
   if (strava === undefined) return undefined
   if (athlete === null) return null
   if (athlete === undefined) return undefined
-  const token = strava.getToken()
-  if (token === undefined) return undefined
+  if (authContext === undefined) return undefined
+  if (authContext === null) return null
 
   return {
     ...athlete,
-    startBackfill: () => startBackfill(athlete, token, setAthlete),
-    completeBackfill: () => completeBackfill(athlete, token, setAthlete),
+    startBackfill: () => authContext.token().then(t => startBackfill(athlete, setAthlete, t)),
+    completeBackfill: () => authContext.token().then(t => completeBackfill(athlete, setAthlete, t)),
   }
 }
 

@@ -20,14 +20,11 @@ const isAuthed = async () => {
 
   // Refresh expired access tokens
   if (auth.expires_at < Date.now() / 1000) {
-    if (auth.refresh_token !== undefined && auth.refresh_token !== '') {
-      const e = await refresh(auth)
-      if (e === undefined) {
-        return true
-      }
-      console.error(e)
+    const refreshed = await refresh(auth)
+    if (refreshed?.access_token === undefined || refreshed.access_token === '') {
+      return false
     }
-    return false
+    return true
   }
 
   // If something looks wrong with access_token, bail out
@@ -38,11 +35,18 @@ const isAuthed = async () => {
   return true
 }
 
-const getToken = () => {
+// YOU WERE HERE LAST!!!
+// You've made getToken async because we want to be able to refresh
+// the token if it needs it.
+// Only problem is you've got loads of calls to getToken that don't expect it
+// to be async. So you need to go through and fix them all, or find a way to refresh
+// without making getToken async. Allow it to be undefined until the promise resolves?
+const getToken = async () => {
   const auth = getAuth()
   if (auth === undefined) {
     return undefined
   }
+
   return auth.access_token
 }
 
@@ -95,9 +99,10 @@ const refresh = (auth: StravaAuth) => {
     .then(checkErrors)
     .then(data => data.json())
     .then(data => {
-      localStorage.setItem('strava_auth', JSON.stringify({ ...auth, ...data }))
+      const newAuth = { ...auth, ...data }
+      localStorage.setItem('strava_auth', JSON.stringify(newAuth))
+      return newAuth
     })
-    .catch(e => e)
     .finally(() => refreshing = false)
 }
 
@@ -132,7 +137,7 @@ const signOut = () => {
 
 interface StravaAPI {
   isAuthed: () => Promise<boolean>
-  getToken: () => string | undefined
+  getToken: () => Promise<string | undefined>
   getAthlete: () => Athlete | undefined
   deleteAthlete: () => Promise<void>
   activities: (page: number) => Promise<Activity[]>

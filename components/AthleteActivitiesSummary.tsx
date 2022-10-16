@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import useStrava from 'hooks/useStrava'
+import { useAuthContext } from 'context/auth'
 import { Activity, Athlete } from 'lib/strava/types'
 
 import styles from 'styles/AthleteActivitiesSummary.module.scss'
@@ -10,20 +10,29 @@ type AthleteActivitiesSummaryProps = {
 }
 
 const AthleteActivitiesSummary = ({ athlete }: AthleteActivitiesSummaryProps) => {
-  const { strava } = useStrava()
-  const [activities, setActivities] = useState<Activity[]>([])
+  const authContext = useAuthContext()
+  const [activities, setActivities] = useState<Activity[] | undefined>(undefined)
+
   useEffect(() => {
-    if (strava === undefined) return
-    fetch(`/api/user/activities?id=${athlete.id}`, {
-      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
-    })
-      .then(res => res.json())
-      .then(data => setActivities(data))
-  }, [athlete, strava])
+    if (authContext === undefined || authContext === null) return
+
+    authContext.token()
+      .then(token => {
+        fetch(`/api/user/activities?id=${athlete.id}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+          .then(res => res.json())
+          .then(data => setActivities(data))
+      })
+  }, [athlete, authContext])
 
   let content = <p>Loading your activities...</p>
-  if (activities.length > 0) {
-    content = <p><strong>{activities.length}</strong> activities</p>
+  if (activities !== undefined) {
+    let noun = 'activities'
+    if (activities.length === 1) {
+      noun = 'activity'
+    }
+    content = <p><strong>{activities.length}</strong> {noun}</p>
   }
 
   return <div className={styles.wrapper}>

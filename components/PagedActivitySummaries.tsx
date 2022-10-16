@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-import { Activity } from 'lib/strava/types'
 import ActivitySummary from 'components/ActivitySummary'
+import { Activity } from 'lib/strava/types'
 
 const pageSize = 10
 

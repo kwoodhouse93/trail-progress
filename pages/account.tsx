@@ -1,17 +1,17 @@
 import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
 
-import useAthlete from 'hooks/useAthlete'
-import useStrava from 'hooks/useStrava'
 import Layout from 'components/layouts/Layout'
 import Athlete from 'components/Athlete'
+import { useAuthContext } from 'context/auth'
+import useStrava from 'hooks/useStrava'
 
 export default function Home() {
   const { strava } = useStrava()
-  const router = useRouter()
-  const athlete = useAthlete()
 
-  if (athlete === null) {
+  const router = useRouter()
+  const authContext = useAuthContext()
+  if (authContext === null) {
     router.push('/')
     return null
   }
@@ -32,7 +32,8 @@ export default function Home() {
     if (!sure) return
 
     strava.deleteAthlete()
-    // Yes, this is gross. But we want to improve the odds we've actually deleted the athlete before redirecting to `/`.
+    // Yes, this is gross. But it's the laziest way to improve the odds we've
+    // actually deleted the athlete before redirecting to `/`.
     setTimeout(() => {
       router.push('/')
     }, 500)

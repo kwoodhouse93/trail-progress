@@ -1,18 +1,18 @@
-import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
+import { ReactElement } from 'react'
 
-import useAthlete from 'hooks/useAthlete'
-import Footer from 'components/Footer'
 import SplashLayout from 'components/layouts/SplashLayout'
+import Footer from 'components/Footer'
 import StravaCTA from 'components/StravaCTA'
+import { useAuthContext } from 'context/auth'
 
 import styles from 'styles/Splash.module.scss'
 
 export default function Home() {
-  const athlete = useAthlete()
   const router = useRouter()
+  const authContext = useAuthContext()
 
-  if (athlete !== undefined && athlete !== null) {
+  if (authContext !== undefined && authContext !== null) {
     router.push('/trails')
     return null
   }

@@ -1,13 +1,13 @@
 import React from 'react'
 import Head from 'next/head'
 
-import useStrava from 'hooks/useStrava'
 import AthleteFooter from 'components/AthleteFooter'
 import TitleBar from 'components/TitleBar'
+import { useAuthContext } from 'context/auth'
 
 const AthleteLayout = ({ children }: React.PropsWithChildren<any>) => {
-  const { strava } = useStrava()
-  const athlete = strava?.getAthlete()
+  const authContext = useAuthContext()
+
   const title = process.env.NODE_ENV === 'development' ? '[DEV] TrailTracker' : 'TrailTracker'
 
   return (
@@ -22,7 +22,7 @@ const AthleteLayout = ({ children }: React.PropsWithChildren<any>) => {
       <main>
         {children}
       </main>
-      <AthleteFooter athlete={athlete} />
+      <AthleteFooter athlete={authContext?.athlete} />
     </>
   )
 }

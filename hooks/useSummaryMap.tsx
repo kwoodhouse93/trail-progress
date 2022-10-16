@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
 import dynamic from 'next/dynamic'
+import { useMemo } from 'react'
 
 export const useSummaryMap = () => useMemo(() => dynamic(
   () => import('components/SummaryMap'),

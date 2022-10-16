@@ -1,19 +1,19 @@
-import { ReactElement } from 'react'
 import { useRouter } from 'next/router'
+import { ReactElement } from 'react'
 
-import useAthlete from 'hooks/useAthlete'
-import { cn } from 'lib/styles'
 import ButtonLink from 'components/common/ButtonLink'
 import AthleteLayout from 'components/layouts/AthleteLayout'
+import { useAuthContext } from 'context/auth'
+import { cn } from 'lib/styles'
 
 import styles from 'styles/Pending.module.scss'
 
 export default function Pending() {
-  const athlete = useAthlete()
   const router = useRouter()
-  if (athlete === null) {
+  const authContext = useAuthContext()
+  if (authContext === null) {
     router.push('/')
-    return
+    return null
   }
 
   return <div className={cn('pageWrapper', styles.wrapper)}>

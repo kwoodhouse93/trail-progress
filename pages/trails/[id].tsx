@@ -1,14 +1,14 @@
-import { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { ReactElement, useEffect, useState } from 'react'
 
-import useAthlete from 'hooks/useAthlete'
-import { useDetailMap } from 'hooks/useDetailMap'
-import useStrava from 'hooks/useStrava'
-import { Activity, metersReadable } from 'lib/strava/types'
-import { Route } from 'lib/types'
 import AthleteLayout from 'components/layouts/AthleteLayout'
 import ActivitySummary from 'components/ActivitySummary'
 import CoverageBar from 'components/CoverageBar'
+import { useAuthContext } from 'context/auth'
+import useAthlete from 'hooks/useAthlete'
+import { useDetailMap } from 'hooks/useDetailMap'
+import { Activity, metersReadable } from 'lib/strava/types'
+import { Route } from 'lib/types'
 
 import styles from 'styles/TrailPage.module.scss'
 
@@ -26,11 +26,12 @@ type CoverageActivity = {
 export default function TrailPage() {
   const DetailMap = useDetailMap()
 
+  const authContext = useAuthContext()
+
   const router = useRouter()
   const { id } = router.query
 
   const athlete = useAthlete()
-  const { strava } = useStrava()
 
   const [trail, setTrail] = useState<Route | undefined>(undefined)
   const [coverage, setCoverage] = useState<string[] | undefined>(undefined)
@@ -38,11 +39,7 @@ export default function TrailPage() {
   const [activities, setActivities] = useState<CoverageActivity[]>([])
 
   useEffect(() => {
-    if (athlete === undefined) return
-    if (athlete === null) {
-      router.push('/')
-      return
-    }
+    if (athlete === undefined || athlete === null) return
     if (athlete.backfill_status !== 'complete') {
       router.push('/pending')
       return
@@ -59,23 +56,27 @@ export default function TrailPage() {
   }, [id])
 
   useEffect(() => {
-    if (id === undefined || strava === undefined) {
-      return
-    }
-    const stravaAthlete = strava.getAthlete()
-    if (stravaAthlete === undefined) return
+    if (id === undefined) return
+    if (authContext === undefined || authContext === null) return
 
-    fetch(`/api/user/route?route_id=${id}&athlete_id=${stravaAthlete.id}`, {
-      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data === undefined) return
-        Array.isArray(data.union) && setCoverage(data.union.map((u: { polyline: string }) => u.polyline))
-        setStats(data.stats)
-        Array.isArray(data.relevantActivities) && setActivities(data.relevantActivities)
+    authContext.token().then(token => {
+      fetch(`/api/user/route?route_id=${id}&athlete_id=${authContext.athlete.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       })
-  }, [id, strava])
+        .then(res => res.json())
+        .then(data => {
+          if (data === undefined) return
+          Array.isArray(data.union) && setCoverage(data.union.map((u: { polyline: string }) => u.polyline))
+          setStats(data.stats)
+          Array.isArray(data.relevantActivities) && setActivities(data.relevantActivities)
+        })
+    })
+  }, [id, authContext])
+
+  if (authContext === null) {
+    router.push('/')
+    return null
+  }
 
   if (trail === undefined || stats === undefined) return null
 

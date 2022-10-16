@@ -1,19 +1,21 @@
-import { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { ReactElement, useEffect, useState } from 'react'
 
-import useAthlete from 'hooks/useAthlete'
-import useStrava from 'hooks/useStrava'
 import AthleteLayout from 'components/layouts/AthleteLayout'
 import AfterDelay from 'components/AfterDelay'
 import SetupProgress from 'components/SetupProgress'
 import Spinner from 'components/Spinner'
+import { useAuthContext } from 'context/auth'
+import useAthlete from 'hooks/useAthlete'
+import useStrava from 'hooks/useStrava'
 
 import styles from 'styles/Backfill.module.scss'
 
 type Status = 'default' | 'backfill' | 'process' | 'done'
 
 export default function Backfill() {
+  const authContext = useAuthContext()
   const { strava } = useStrava()
   const athlete = useAthlete()
   const router = useRouter()
@@ -25,7 +27,12 @@ export default function Backfill() {
 
   useEffect(() => {
     const backfillActivities = async () => {
-      if (athlete === undefined || athlete === null || strava === undefined) return
+      if (strava === undefined) return
+      if (athlete === undefined || athlete === null) return
+      if (authContext === undefined || authContext === null) return
+
+      const token = await authContext.token()
+      if (token === undefined) return
 
       try {
         for (let page = 1, done = false; !done; page++) {
@@ -46,7 +53,7 @@ export default function Backfill() {
           fetch('/api/user/activities', {
             method: 'POST',
             body: JSON.stringify(activities),
-            headers: { 'Authorization': `Bearer ${strava.getToken()}` }
+            headers: { 'Authorization': `Bearer ${token}` }
           }).then(res => {
             if (!res.ok) {
               setError('Something went wrong.')
@@ -60,11 +67,8 @@ export default function Backfill() {
     }
 
     if (strava === undefined) return
-    if (athlete === undefined) return
-    if (athlete === null) {
-      router.push('/')
-      return
-    }
+    if (athlete === undefined || athlete === null) return
+    if (authContext === undefined || authContext === null) return
 
     switch (athlete.backfill_status) {
       case 'not_started':
@@ -80,27 +84,28 @@ export default function Backfill() {
         break
     }
     // TODO: Check what happens if account has 0 activities
-  }, [strava, athlete?.id, athlete?.backfill_status, router])
+  }, [strava, authContext, athlete?.id, athlete?.backfill_status, router])
 
   useEffect(() => {
     if (!dirty) return
-    if (strava === undefined) return
-    const athlete = strava.getAthlete()
-    if (athlete === undefined) return
+    if (authContext === undefined || authContext === null) return
 
-    setDirty(false)
-    fetch(`/api/user/processing?id=${athlete.id}`, {
-      headers: { 'Authorization': `Bearer ${strava.getToken()}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.length === 0) {
-          router.push('/trails')
-          return
-        }
-        setTimeout(() => setDirty(true), 2000)
+    authContext.token().then(token => {
+      setDirty(false)
+      fetch(`/api/user/processing?id=${authContext.athlete.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       })
-  }, [strava, dirty, router])
+        .then(res => res.json())
+        .then(data => {
+          if (data.length === 0) {
+            console.log('leaving backfill due to processing complete')
+            router.push('/trails')
+            return
+          }
+          setTimeout(() => setDirty(true), 2000)
+        })
+    })
+  }, [authContext, dirty, router])
 
   const content = (status: Status) => {
     switch (status) {

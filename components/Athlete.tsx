@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { Athlete } from 'lib/strava/types'
 import Button from 'components/common/Button'
 import AthleteActivitiesSummary from 'components/AthleteActivitiesSummary'
+import { Athlete } from 'lib/strava/types'
 
 import styles from 'styles/Athlete.module.scss'
 

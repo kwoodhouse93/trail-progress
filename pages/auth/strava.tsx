@@ -1,5 +1,5 @@
-import { ReactElement, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { ReactElement, useEffect, useState } from 'react'
 
 import SplashLayout from 'components/layouts/SplashLayout'
 import StravaLogin from 'components/StravaLogin'
