@@ -25,17 +25,32 @@ const processing = async (req: NextApiRequest, res: NextApiResponse) => {
   return
 }
 
-const selectQuery = `SELECT
-  route_id,
-  COUNT(processed) AS unprocessed_count
-FROM
-  processing
-JOIN
-  activities ON activities.id = processing.activity_id
-WHERE
-  activities.athlete_id = $1 AND
-  processing.processed = false
-GROUP BY
-  route_id`
+const selectQuery = `with
+  processed as (
+    select
+      count(processed),
+      route_id
+    from processing
+    join activities on activities.id = processing.activity_id
+    where processed = true and activities.athlete_id = $1
+    group by route_id
+  ),
+  unprocessed as (
+    select
+      count(processed),
+      route_id
+    from processing
+    join activities on activities.id = processing.activity_id
+    where processed = false and activities.athlete_id = $1
+    group by route_id
+  )
+select
+  processed.route_id,
+  coalesce(processed.count, 0) as processed,
+  coalesce(unprocessed.count, 0) as unprocessed,
+  coalesce(processed.count, 0) + coalesce(unprocessed.count, 0) as total
+from processed
+full join unprocessed on processed.route_id = unprocessed.route_id;
+`
 
 export default processing

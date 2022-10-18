@@ -11,6 +11,9 @@ import useAthlete from 'hooks/useAthlete'
 import useStrava from 'hooks/useStrava'
 
 import styles from 'styles/Backfill.module.scss'
+import { activityCount, allProcessed, mapProcessingData, processed, ProcessingStats, total } from 'lib/processing'
+import CoverageBar from 'components/CoverageBar'
+import ProgressBar from 'components/common/ProgressBar'
 
 type Status = 'default' | 'backfill' | 'process' | 'done'
 
@@ -22,7 +25,7 @@ export default function Backfill() {
 
   const [status, setStatus] = useState<Status>('default')
   const [dirty, setDirty] = useState(false)
-  const [activityCount, setActivityCount] = useState<number>(0)
+  const [processingStats, setProcessingStats] = useState<ProcessingStats[]>([])
   const [error, setError] = useState<string | undefined>(undefined)
 
   useEffect(() => {
@@ -44,8 +47,6 @@ export default function Backfill() {
             athlete.completeBackfill()
             return
           }
-
-          setActivityCount(c => c + activities.length)
 
           // Dispatch storing in DB asynchronously so we can fetch more activities in parallel.
           // TODO: Handle errors here. We mark as backfill complete if we fetch them all from Strava,
@@ -96,9 +97,11 @@ export default function Backfill() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
         .then(res => res.json())
+        .then(mapProcessingData)
         .then(data => {
-          if (data.length === 0) {
-            console.log('leaving backfill due to processing complete')
+          if (data === null) return
+          setProcessingStats(data)
+          if (allProcessed(data)) {
             router.push('/trails')
             return
           }
@@ -122,13 +125,11 @@ export default function Backfill() {
         return <p>Fetching your activities from Strava...</p>
       case 'process':
         return <>
-          <p>Loaded {activityCount} activities.</p>
+          <p>Loaded {activityCount(processingStats)} activities.</p>
           <p>Just crunching the numbers...</p>
+          <ProgressBar className={styles.progressBar} total={total(processingStats)} completed={processed(processingStats)} />
           <AfterDelay delay={2000}>
-            <p>This can take a few minutes.</p>
-          </AfterDelay>
-          <AfterDelay delay={10000}>
-            <p>There’s a lot of calculations involved!</p>
+            <p>This can take a minute. <Link href="/trails">Skip ahead?</Link></p>
           </AfterDelay>
         </>
       case 'done':

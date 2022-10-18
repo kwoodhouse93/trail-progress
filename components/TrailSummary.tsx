@@ -10,22 +10,24 @@ import styles from 'styles/TrailSummary.module.scss'
 
 type TrailSummaryProps = {
   trail: Route
-  pending?: boolean
+  ready: boolean
+  completion?: number
 }
 
-const TrailSummary = ({ trail, pending, className }: TrailSummaryProps & React.HTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>>) => {
+const TrailSummary = ({ trail, ready, completion, className }: TrailSummaryProps & React.HTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>>) => {
   const SummaryMap = useSummaryMap()
 
-  if (pending) {
+  if (!ready) {
     return <div className={cn(className, styles.wrapper, styles.pending)}>
       <div className={styles.titleWrapper}>
         <h3 className={styles.title}>{trail.display_name}</h3>
       </div>
       <SummaryMap polyline={trail.polyline} />
       <div className={styles.spinner} />
-      <div className={styles.captionWrapper}>
+      <div className={cn(styles.captionWrapper, styles.withProgress)}>
         <p className={styles.caption}>Still calculating...</p>
       </div>
+      {completion !== undefined && <div className={styles.progress} style={{ width: completion * 100 + '%' }} />}
     </div>
   }
 

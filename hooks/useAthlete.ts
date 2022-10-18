@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
 import { useAuthContext } from 'context/auth'
@@ -73,6 +74,7 @@ const useAthlete: () => AthleteAPI | null | undefined = () => {
   const authContext = useAuthContext()
   const { strava } = useStrava()
   const [athlete, setAthlete] = useState<Athlete | null | undefined>(undefined)
+  const router = useRouter()
 
   useEffect(() => {
     if (strava === undefined) return
@@ -90,9 +92,9 @@ const useAthlete: () => AthleteAPI | null | undefined = () => {
           headers: { 'Authorization': `Bearer ${token}` },
         })
         if (!res.ok) {
-          // TODO: Revisit logging user out if athlete is not found
-          // localStorage.removeItem('strava_auth')
+          localStorage.removeItem('strava_auth')
           setAthlete(null)
+          router.push('/')
           return
         }
         const data = await res.json()

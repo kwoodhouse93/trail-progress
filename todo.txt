@@ -1,20 +1,17 @@
 TODO:
 
 NOW
-- Break down processing so more activity/route pairs can be marked as processed sooner
 
 MEDIUM (needed before launch)
+- Show background processing completion on /trails/[id]
 - Test token refresh
 - If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Add more trails
-- Show background processing completion on /trails/[id]
 - Setting map zoom level seems to work locally but not when deployed... Weird
 - Add favicon and Strava app icon
 
 LOW (nice to have)
-- Potentially use a context for strava/auth?
 - Sort trails by completion percentage
-- Explain when user has not started a trail
 - Explain when user has completed a trail
 - Check and respect rate limits to avoid overuse
 - Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)

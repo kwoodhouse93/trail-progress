@@ -36,6 +36,9 @@
     bottom: 0;
     z-index: 1100;
 }
+.captionWrapper.withProgress {
+    padding-bottom: 16px;
+}
 
 .caption {
     color: $white;
@@ -99,4 +102,15 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+.progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 8px;
+    background-color: hsla(0, 0, 100%, 0.9);
+    width: 0%;
+    z-index: 1200;
+    transition: width 2.1s ease-in-out;
 }

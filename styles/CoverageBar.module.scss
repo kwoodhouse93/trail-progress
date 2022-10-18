@@ -1,39 +1,10 @@
 @import "styles/theme.scss";
 
 .wrapper {
-    margin: 16px 0 36px 0;
     width: 100%;
+    margin: 16px 0 36px 0;
 }
 
 .caption {
     margin: 0 0 24px 0;
-}
-
-.barWrapper {
-    background-color: $light-shadow;
-    border-radius: $border-radius;
-    height: 16px;
-    overflow: hidden;
-}
-
-.bar {
-    height: 100%;
-    background-color: $medium-blue;
-}
-
-.labelWrapper {
-    position: relative;
-    width: calc(100% - 56px);
-    margin: -16px auto 0;
-}
-
-.label {
-    position: absolute;
-    background-color: $dark-blue;
-    color: $white;
-    font-weight: 600;
-    top: -15px;
-    padding: 8px 16px;
-    border-radius: 26px;
-    box-shadow: $box-shadow;
 }

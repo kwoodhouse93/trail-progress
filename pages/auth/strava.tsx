@@ -3,7 +3,10 @@ import { ReactElement, useEffect, useState } from 'react'
 
 import SplashLayout from 'components/layouts/SplashLayout'
 import StravaLogin from 'components/StravaLogin'
+import Spinner from 'components/Spinner'
 import { exchangeCode } from 'hooks/useStrava'
+
+import styles from 'styles/AuthStravaPage.module.scss'
 
 const AuthStrava = () => {
   const router = useRouter()
@@ -37,9 +40,12 @@ const AuthStrava = () => {
 
   return (
     <div className='pageWrapper'>
-      <p className='para'>
-        Connecting your account...
-      </p>
+      <Spinner />
+      <div className={styles.contentWrapper}>
+        <p className='para'>
+          Connecting your account...
+        </p>
+      </div>
 
       {error !== undefined &&
         <div >
