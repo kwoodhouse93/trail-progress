@@ -22,7 +22,7 @@ export default function Home() {
       Have you ever walked part of a long distance trail, and wondered...
     </p>
     <p className={styles.blockquote}>
-      How much have I completed?
+      How much have I done?
     </p>
 
     <Footer>

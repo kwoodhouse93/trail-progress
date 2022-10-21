@@ -8,7 +8,7 @@ import { useAuthContext } from 'context/auth'
 const AthleteLayout = ({ children }: React.PropsWithChildren<any>) => {
   const authContext = useAuthContext()
 
-  const title = process.env.NODE_ENV === 'development' ? '[DEV] TrailTracker' : 'TrailTracker'
+  const title = process.env.NODE_ENV === 'development' ? '[DEV] Trail Tracker' : 'Trail Tracker'
 
   return (
     <>

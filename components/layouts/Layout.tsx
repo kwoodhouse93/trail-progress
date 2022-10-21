@@ -4,7 +4,7 @@ import Head from 'next/head'
 import TitleBar from 'components/TitleBar'
 
 const Layout = ({ children }: React.PropsWithChildren<any>) => {
-  const title = process.env.NODE_ENV === 'development' ? '[DEV] TrailTracker' : 'TrailTracker'
+  const title = process.env.NODE_ENV === 'development' ? '[DEV] Trail Tracker' : 'Trail Tracker'
   return (
     <>
       <Head>

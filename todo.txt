@@ -1,25 +1,25 @@
 TODO:
 
 NOW
+- Setting map zoom level seems to work locally but not when deployed... Weird
 
 MEDIUM (needed before launch)
-- Show background processing completion on /trails/[id]
 - Test token refresh
-- If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Add more trails
-- Setting map zoom level seems to work locally but not when deployed... Weird
 - Add favicon and Strava app icon
 
 LOW (nice to have)
+- Custom domain
+- If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
 - Sort trails by completion percentage
 - Explain when user has completed a trail
 - Check and respect rate limits to avoid overuse
 - Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
 - Review screens that flash content - consider global loading state?
 - Add user settings for units and activity types to include
-- Returning to /backfill after leaving it during backfill/processing, it sometimes says "0 activities loaded" incorrectly
 
 VERY LOW (maybe do at some point)
+- Show background processing completion on /trails/[id]
 - Look into pulling streams and processing these in addition to polylines - is it really necessary? What's the max. privacy area on Strava?
 - Check we meet Strava brand guidelines
 - Consider alternative map tiles / mapping library

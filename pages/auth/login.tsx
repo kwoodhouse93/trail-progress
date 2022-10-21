@@ -17,7 +17,7 @@ export default function Login() {
     return <div className={cn('pageWrapper', styles.wrapper)}>
       <SetupProgress state='connecting' />
       <p className={cn('para', styles.connectPara)}>
-        Connect your Strava account to use TrailTracker.
+        Connect your Strava account to use <strong>Trail Tracker</strong>
       </p>
       <StravaLogin />
     </div>

@@ -6,6 +6,7 @@ import { allProcessed, completion, mapProcessingData, processedRouteIDs, Process
 import { Route } from 'lib/types'
 
 import styles from 'styles/TrailList.module.scss'
+import Spinner from './Spinner'
 
 
 const TrailList = () => {
@@ -70,7 +71,7 @@ const TrailList = () => {
   }, [processedRoutes.length])
 
   if (trails?.length === 0) {
-    return null
+    return <Spinner />
   }
 
   return <ul className={styles.list}>

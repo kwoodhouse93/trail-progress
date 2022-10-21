@@ -105,7 +105,7 @@ export default function TrailPage() {
       :
       <>
         <p>
-          It looks you haven’t been to the {trail.display_name} yet.
+          It looks like you haven’t been to the {trail.display_name} yet.
           Why not plan a trip?
         </p>
       </>
