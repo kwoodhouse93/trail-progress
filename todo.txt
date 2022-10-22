@@ -1,12 +1,10 @@
 TODO:
 
 NOW
-- Setting map zoom level seems to work locally but not when deployed... Weird
 
 MEDIUM (needed before launch)
 - Test token refresh
 - Add more trails
-- Add favicon and Strava app icon
 
 LOW (nice to have)
 - Custom domain
@@ -18,7 +16,6 @@ LOW (nice to have)
 - Add user settings for units and activity types to include
 
 VERY LOW (maybe do at some point)
-- Consider mapbox for interactive maps?
 - Show background processing completion on /trails/[id]
 - Look into pulling streams and processing these in addition to polylines - is it really necessary? What's the max. privacy area on Strava?
 - Check we meet Strava brand guidelines

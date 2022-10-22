@@ -10,7 +10,7 @@ const Layout = ({ children }: React.PropsWithChildren<any>) => {
       <Head>
         <title>{title}</title>
         <meta name="description" content="Choose a trail, and connect your Strava account to see your progress!" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" />
       </Head>
 
       <TitleBar type='small' />
