@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useSummaryMap } from 'hooks/useSummaryMap'
 import { metersReadable } from 'lib/strava/types'
@@ -15,14 +15,12 @@ type TrailSummaryProps = {
 }
 
 const TrailSummary = ({ trail, ready, completion, className }: TrailSummaryProps & React.HTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>>) => {
-  const SummaryMap = useSummaryMap()
-
   if (!ready) {
     return <div className={cn(className, styles.wrapper, styles.pending)}>
       <div className={styles.titleWrapper}>
         <h3 className={styles.title}>{trail.display_name}</h3>
       </div>
-      <SummaryMap polyline={trail.polyline} />
+      <img src={trail.thumbnail} />
       <div className={styles.spinner} />
       <div className={cn(styles.captionWrapper, styles.withProgress)}>
         <p className={styles.caption}>Still calculating...</p>
@@ -50,7 +48,7 @@ const TrailSummary = ({ trail, ready, completion, className }: TrailSummaryProps
           <h3 className={styles.title}>{trail.display_name}</h3>
           {trail.length !== undefined && <p className={styles.subtitle}>{metersReadable(trail.length)}</p>}
         </div>
-        <SummaryMap polyline={trail.polyline} />
+        <img src={trail.thumbnail} />
         {caption}
       </a>
     </Link>

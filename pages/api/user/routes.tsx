@@ -38,9 +38,9 @@ with stats as (
 select
   routes.id,
   routes.display_name,
-  ST_AsEncodedPolyline(routes.track::geometry) as polyline,
-  ST_Length(routes.track) as length,
+  routes.length,
   routes.description,
+  routes.thumbnail,
   coalesce(stats.covered_length, 0) as covered_length
 from routes
 left outer join stats on stats.route_id = routes.id

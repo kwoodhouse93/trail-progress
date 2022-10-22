@@ -18,7 +18,7 @@ export default routes
 const selectQuery = `SELECT
   id,
   display_name,
-  ST_AsEncodedPolyline(track::geometry) as polyline,
-  ST_Length(track) as length,
-  description
+  length,
+  description,
+  thumbnail
 FROM routes`
