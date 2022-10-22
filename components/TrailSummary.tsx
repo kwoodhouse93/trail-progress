@@ -1,7 +1,6 @@
 import Link from 'next/link'
-import React, { useEffect } from 'react'
+import React from 'react'
 
-import { useSummaryMap } from 'hooks/useSummaryMap'
 import { metersReadable } from 'lib/strava/types'
 import { cn } from 'lib/styles'
 import { Route } from 'lib/types'
@@ -20,7 +19,7 @@ const TrailSummary = ({ trail, ready, completion, className }: TrailSummaryProps
       <div className={styles.titleWrapper}>
         <h3 className={styles.title}>{trail.display_name}</h3>
       </div>
-      <img src={trail.thumbnail} />
+      <img src={trail.thumbnail} alt={`Map showing route of ${trail.display_name}`} />
       <div className={styles.spinner} />
       <div className={cn(styles.captionWrapper, styles.withProgress)}>
         <p className={styles.caption}>Still calculating...</p>
@@ -48,7 +47,7 @@ const TrailSummary = ({ trail, ready, completion, className }: TrailSummaryProps
           <h3 className={styles.title}>{trail.display_name}</h3>
           {trail.length !== undefined && <p className={styles.subtitle}>{metersReadable(trail.length)}</p>}
         </div>
-        <img src={trail.thumbnail} />
+        <img src={trail.thumbnail} alt={`Map showing route of ${trail.display_name}`} />
         {caption}
       </a>
     </Link>

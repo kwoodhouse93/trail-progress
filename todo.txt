@@ -14,16 +14,15 @@ LOW (nice to have)
 - Sort trails by completion percentage
 - Explain when user has completed a trail
 - Check and respect rate limits to avoid overuse
-- Consider a mapping library with support for static maps (e.g. for activity summary maps - loading lots of interactive maps but disabling interaction doesn't seem sensible)
 - Review screens that flash content - consider global loading state?
 - Add user settings for units and activity types to include
 
 VERY LOW (maybe do at some point)
+- Consider mapbox for interactive maps?
 - Show background processing completion on /trails/[id]
 - Look into pulling streams and processing these in addition to polylines - is it really necessary? What's the max. privacy area on Strava?
 - Check we meet Strava brand guidelines
 - Consider alternative map tiles / mapping library
 - Dark mode
-- Pretty up the headline route stats on /trails
 - Add activity browser/search in /account
 - Consider checking athlete backfill/processing status on exchange to figure out where to redirect them to (could avoid /backfill flashing up if we check it before redirecting)

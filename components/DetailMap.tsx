@@ -5,7 +5,7 @@ import { MapContainer, Polyline, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 type DetailMapProps = {
-  polyline: string
+  polyline?: string
   overlayPolylines?: string[]
 }
 
