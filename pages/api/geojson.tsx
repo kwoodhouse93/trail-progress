@@ -13,23 +13,18 @@ const route = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: 'id is required' })
   }
 
-  const rows = await pool.query<Route>(selectQuery, [req.query.id])
+  const rows = await pool.query<{ geojson: string }>(selectQuery, [req.query.id])
   if (rows.rowCount !== 1) {
     res.status(404).json({ error: 'route not found' })
     return
   }
 
-  res.status(200).json(rows.rows[0])
+  res.status(200).json(JSON.parse(rows.rows[0].geojson))
 }
 
 export default route
 
 const selectQuery = `SELECT
-  id,
-  display_name,
-  ST_AsEncodedPolyline(track::geometry) as polyline,
-  ST_AsGeoJSON(track::geometry) as geojson,
-  length,
-  description
+  ST_AsGeoJSON(track::geometry) as geojson
 FROM routes
 WHERE id = $1`

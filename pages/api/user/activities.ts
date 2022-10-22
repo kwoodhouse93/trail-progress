@@ -41,8 +41,8 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Extract athlete ID from activities to make sure they're all owned by
   // the same person.
-  const singleAthlete = data.every(activity => activity.athlete.id === data[0].athlete.id)
-  if (!singleAthlete) {
+  const singleAthlete = data.every(activity => activity.athlete?.id === data[0].athlete?.id)
+  if (!singleAthlete || data[0].athlete?.id === undefined) {
     res.status(400).json({ error: 'Invalid data' })
     return
   }
@@ -138,7 +138,7 @@ const toValues = (activity: Activity) => {
 
   return [
     activity.id,
-    activity.athlete.id,
+    activity.athlete?.id,
     activity.name,
     activity.distance,
     activity.moving_time,

@@ -30,12 +30,12 @@ export interface Map {
 
 export interface Activity {
   resource_state?: number
-  athlete: Athlete
+  athlete?: Athlete
   name: string
   distance: number
   moving_time: number
   elapsed_time: number
-  total_elevation_gain: number
+  total_elevation_gain?: number
   type?: string
   sport_type: string
   id: number
@@ -51,7 +51,7 @@ export interface Activity {
   comment_count?: number
   athlete_count?: number
   photo_count?: number
-  map: Map
+  map?: Map
   trainer?: boolean
   commute?: boolean
   manual?: boolean

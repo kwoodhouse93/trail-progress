@@ -29,7 +29,10 @@ const TrailList = () => {
       })
         .then(res => res.json())
         .then(data => {
-          Array.isArray(data) && setTrails(data)
+          Array.isArray(data) && setTrails(data
+            .sort((a, b) => a.display_name.localeCompare(b.display_name))
+            .sort((a, b) => b.covered_length - a.covered_length)
+          )
         })
     })
   }, [authContext, fetchRoutes])

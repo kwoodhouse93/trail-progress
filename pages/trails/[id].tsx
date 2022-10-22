@@ -6,11 +6,11 @@ import ActivitySummary from 'components/ActivitySummary'
 import CoverageBar from 'components/CoverageBar'
 import { useAuthContext } from 'context/auth'
 import useAthlete from 'hooks/useAthlete'
-import { useDetailMap } from 'hooks/useDetailMap'
 import { Activity, metersReadable } from 'lib/strava/types'
 import { Route } from 'lib/types'
 
 import styles from 'styles/TrailPage.module.scss'
+import MapboxMap from 'components/MapboxMap'
 
 type Stats = {
   length: number
@@ -24,8 +24,6 @@ type CoverageActivity = {
 }
 
 export default function TrailPage() {
-  const DetailMap = useDetailMap()
-
   const authContext = useAuthContext()
 
   const router = useRouter()
@@ -34,7 +32,7 @@ export default function TrailPage() {
   const athlete = useAthlete()
 
   const [trail, setTrail] = useState<Route | undefined>(undefined)
-  const [coverage, setCoverage] = useState<string[] | undefined>(undefined)
+  const [coverage, setCoverage] = useState<GeoJSON.MultiLineString | undefined>(undefined)
   const [stats, setStats] = useState<Stats | undefined>(undefined)
   const [activities, setActivities] = useState<CoverageActivity[]>([])
 
@@ -66,7 +64,8 @@ export default function TrailPage() {
         .then(res => res.json())
         .then(data => {
           if (data === undefined) return
-          Array.isArray(data.union) && setCoverage(data.union.map((u: { polyline: string }) => u.polyline))
+          console.log('data', data)
+          setCoverage(data.coveredGeoJSON)
           setStats(data.stats)
           Array.isArray(data.relevantActivities) && setActivities(data.relevantActivities)
         })
@@ -91,7 +90,11 @@ export default function TrailPage() {
 
     <div className={styles.mapWrapper}>
       <div className={styles.map}>
-        <DetailMap polyline={trail.polyline} overlayPolylines={coverage} />
+        <MapboxMap
+          id={trail.id}
+          geojson={trail.geojson !== undefined ? JSON.parse(trail.geojson) : undefined}
+          coverage={coverage}
+        />
       </div>
     </div>
 
