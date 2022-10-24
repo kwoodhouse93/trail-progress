@@ -98,7 +98,7 @@ const MapboxMap = ({ id, geojson, coverage }: MapboxMapProps) => {
 
   return <div className={styles.outer}>
     {loading && <div className={styles.spinner}>
-      <Spinner />
+      <Spinner small />
     </div>}
     <div ref={mapContainer} className={styles.wrapper} />
   </div>

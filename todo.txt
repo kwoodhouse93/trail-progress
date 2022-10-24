@@ -2,24 +2,20 @@ TODO:
 
 NOW
 
-MEDIUM (needed before launch)
-- Test token refresh
-- Add more trails
+MEDIUM
 
 LOW (nice to have)
 - Custom domain
 - If backfill succeeds but those activities aren't inserted, we need to be able to catch that error - store activity count alongside updating backfill_status?
-- Sort trails by completion percentage
 - Explain when user has completed a trail
-- Check and respect rate limits to avoid overuse
-- Review screens that flash content - consider global loading state?
-- Add user settings for units and activity types to include
 
 VERY LOW (maybe do at some point)
+- Add user settings for units and activity types to include
+- Check and respect rate limits to avoid overuse
+- Email notification for when processing is done
 - Show background processing completion on /trails/[id]
 - Look into pulling streams and processing these in addition to polylines - is it really necessary? What's the max. privacy area on Strava?
 - Check we meet Strava brand guidelines
-- Consider alternative map tiles / mapping library
 - Dark mode
 - Add activity browser/search in /account
 - Consider checking athlete backfill/processing status on exchange to figure out where to redirect them to (could avoid /backfill flashing up if we check it before redirecting)

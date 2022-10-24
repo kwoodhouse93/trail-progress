@@ -27,7 +27,6 @@ export default route
 const selectQuery = `SELECT
   id,
   display_name,
-  ST_AsEncodedPolyline(track::geometry) as polyline,
   ST_AsGeoJSON(track::geometry) as geojson,
   length,
   description

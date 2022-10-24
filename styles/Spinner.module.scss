@@ -1,5 +1,25 @@
 @import "styles/theme.scss";
 
+@media screen and (max-width: 650px) {
+    .wrapper.small {
+        height: 96px;
+        width: 96px;
+        margin-top: 52px;
+
+        &::before {
+            height: 24px;
+            width: 24px;
+            border-width: 6px;
+            top: -16px;
+            left: 24px;
+        }
+        padding: 6px;
+    }
+    .wrapper.small .needle {
+        width: 12px;
+    }
+}
+
 .wrapper {
     position: relative;
     text-align: start;
