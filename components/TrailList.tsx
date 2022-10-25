@@ -7,6 +7,7 @@ import { Route } from 'lib/types'
 
 import styles from 'styles/TrailList.module.scss'
 import Spinner from './Spinner'
+import TrailRequest from './TrailRequest'
 
 
 const TrailList = () => {
@@ -77,11 +78,14 @@ const TrailList = () => {
     return <Spinner />
   }
 
-  return <ul className={styles.list}>
-    {trails.map(t => <li className={styles.el} key={t.id}>
-      <TrailSummary ready={ready(t, processedRoutes)} completion={completion(t, processingStats)} className={styles.summary} trail={t} />
-    </li>)}
-  </ul>
+  return <>
+    <ul className={styles.list}>
+      {trails.map(t => <li className={styles.el} key={t.id}>
+        <TrailSummary ready={ready(t, processedRoutes)} completion={completion(t, processingStats)} className={styles.summary} trail={t} />
+      </li>)}
+    </ul>
+    <TrailRequest />
+  </>
 }
 
 export default TrailList
