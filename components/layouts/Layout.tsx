@@ -13,7 +13,7 @@ const Layout = ({ children }: React.PropsWithChildren<any>) => {
         <link rel="icon" href="/favicon.svg" />
       </Head>
 
-      <TitleBar type='small' />
+      <TitleBar type='small' button='info' />
       <main>
         {children}
       </main>

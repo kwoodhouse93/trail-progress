@@ -1,0 +1,25 @@
+@import "styles/theme.scss";
+
+.wrapper {
+    // margin-top: 32px;
+    text-align: center;
+
+    font-size: 0.9rem;
+    & > p {
+        margin: 16px 0;
+    }
+    & > h3 {
+        margin-top: 48px;
+    }
+}
+
+.me {
+    margin: 0 auto;
+    border-radius: 50%;
+    width: 128px;
+    box-shadow: $box-shadow;
+}
+
+.kofi {
+    text-align: center;
+}

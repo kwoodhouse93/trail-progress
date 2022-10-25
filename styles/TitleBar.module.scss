@@ -31,8 +31,14 @@
     text-align: center;
     text-transform: uppercase;
 }
-
 .title.small {
     font-size: 1.5rem;
     padding: 16px 16px 24px 16px;
+}
+
+.button {
+    position: absolute;
+    right: 24px;
+    top: 20px;
+    padding: 0 !important;
 }

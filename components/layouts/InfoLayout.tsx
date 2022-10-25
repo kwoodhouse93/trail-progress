@@ -1,10 +1,15 @@
 import React from 'react'
 import Head from 'next/head'
 
+import AthleteFooter from 'components/AthleteFooter'
 import TitleBar from 'components/TitleBar'
+import { useAuthContext } from 'context/auth'
 
-const SplashLayout = ({ children }: React.PropsWithChildren<any>) => {
+const InfoLayout = ({ children }: React.PropsWithChildren<any>) => {
+  const authContext = useAuthContext()
+
   const title = process.env.NODE_ENV === 'development' ? '[DEV] Trail Tracker' : 'Trail Tracker'
+
   return (
     <>
       <Head>
@@ -13,12 +18,13 @@ const SplashLayout = ({ children }: React.PropsWithChildren<any>) => {
         <link rel="icon" href="/favicon.svg" />
       </Head>
 
-      <TitleBar type='large' button='info' />
+      <TitleBar type='small' button='close' />
       <main>
         {children}
       </main>
+      <AthleteFooter athlete={authContext?.athlete} />
     </>
   )
 }
 
-export default SplashLayout
+export default InfoLayout
