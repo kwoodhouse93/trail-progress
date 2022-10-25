@@ -80,10 +80,10 @@ export default function TrailPage() {
   if (trail === undefined || stats === undefined) return null
 
   return <div className='pageWrapper'>
-    <h3>
+    <h3 className={styles.title}>
       {trail.display_name}
     </h3>
-    <p>
+    <p className={styles.description}>
       {trail.description}
     </p>
     {trail.length && <p>The {trail.display_name} is {metersReadable(trail.length)} long.</p>}

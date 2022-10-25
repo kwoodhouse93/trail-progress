@@ -1,5 +1,13 @@
 @import "styles/theme.scss";
 
+.title {
+    margin-bottom: 0.5em;
+}
+
+.description {
+    margin-bottom: 1em;
+}
+
 .mapWrapper {
     position: relative;
     height: 200px;
