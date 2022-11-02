@@ -36,7 +36,6 @@ const validateStravaAuth = (auth: StravaAuth) => {
 
 const AuthContext = createContext<AuthContextAccessor | null | undefined>(undefined)
 
-// TODO: Refresh token if expired
 export const AuthContextProvider = ({ children }: React.PropsWithChildren<any>) => {
   let localAuth: string | null | undefined = undefined
   if (typeof window !== 'undefined') {

@@ -35,12 +35,6 @@ const isAuthed = async () => {
   return true
 }
 
-// YOU WERE HERE LAST!!!
-// You've made getToken async because we want to be able to refresh
-// the token if it needs it.
-// Only problem is you've got loads of calls to getToken that don't expect it
-// to be async. So you need to go through and fix them all, or find a way to refresh
-// without making getToken async. Allow it to be undefined until the promise resolves?
 const getToken = async () => {
   const auth = getAuth()
   if (auth === undefined) {

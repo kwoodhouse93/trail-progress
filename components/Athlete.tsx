@@ -17,9 +17,9 @@ const Athlete = ({ athlete, signOut, deleteAthlete }: AthleteProps) => {
   if (athlete === undefined) return null
 
   const loc = []
-  if (athlete.city !== undefined) loc.push(athlete.city)
-  if (athlete.state !== undefined) loc.push(athlete.state)
-  if (athlete.country !== undefined) loc.push(athlete.country)
+  if (athlete.city !== undefined && athlete.city !== '') loc.push(athlete.city)
+  if (athlete.state !== undefined && athlete.state !== '') loc.push(athlete.state)
+  if (athlete.country !== undefined && athlete.country !== '') loc.push(athlete.country)
   const location = loc.join(', ')
 
   return (
@@ -33,7 +33,7 @@ const Athlete = ({ athlete, signOut, deleteAthlete }: AthleteProps) => {
         height={128}
         alt={`Profile image for ${athlete?.firstname} ${athlete?.lastname}`}
       />
-      <p>{location}</p>
+      {location !== '' && <p>{location}</p>}
       <AthleteActivitiesSummary athlete={athlete} />
       <p className={styles.link}>
         <a href={`https://www.strava.com/athletes/${athlete?.id}`}>View on Strava</a>
