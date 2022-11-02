@@ -30,6 +30,7 @@ const MapboxMap = ({ id, geojson, coverage }: MapboxMapProps) => {
       center: [0.1276, 51.5072],
       zoom: 9,
     })
+    mapboxMap.addControl(new mapboxgl.FullscreenControl())
 
     mapboxMap.on('load', () => {
       mapboxMap.addSource('route', {
